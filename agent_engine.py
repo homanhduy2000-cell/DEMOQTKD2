@@ -12,8 +12,18 @@ from data_generator import STAGE_RULES, DEFAULT_REPORT_DATE
 
 DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6LqubD2sz-lzVEr8Df6PSbqOVB10Ubndkmpk5k5kxuqIg"
 GEMINI_MODELS = ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest"]
-LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
+# Hỗ trợ cả môi trường Local lẫn Serverless Read-only (Vercel / AWS Lambda)
+is_serverless = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+if is_serverless:
+    LOG_DIR = "/tmp/logs"
+else:
+    LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+
+try:
+    os.makedirs(LOG_DIR, exist_ok=True)
+except Exception:
+    LOG_DIR = "/tmp"
+
 AUDIT_LOG_FILE = os.path.join(LOG_DIR, "agent_audit_log.jsonl")
 
 
@@ -93,7 +103,7 @@ def load_from_google_sheets_url(url: str, logger: AuditLogger) -> Dict[str, pd.D
             logger.log(
                 step="BƯỚC 1: Thu thập & Hợp nhất",
                 skill_or_tool="Tool: GoogleSheetsConnector (Demo/Mock Mode)",
-                action="Nạp Google Sheets từ bộ dữ liệu chuẩn mẫu của Công ty Bình Minh",
+                action="Nạp Google Sheets từ bộ dữ liệu chuẩn mẫu của Công ty của Duydudi",
                 rule_applied="RULE-INGEST-GSHEET-DEMO: Nạp trực tiếp bộ 4 bảng chuẩn hóa cho buổi thuyết trình",
                 details={"source": "Mock Google Sheets Template", "path": sample_xlsx}
             )
@@ -1153,7 +1163,7 @@ class SalesProgressAgent:
 
         if self.api_key and self.llm_provider in ["gemini", "openai"]:
             sys_prompt = (
-                "Bạn là Chuyên gia Phân tích Vận hành Kinh doanh B2B (Sales Operations AI Agent) của Công ty Bình Minh. "
+                "Bạn là Chuyên gia Phân tích Vận hành Kinh doanh B2B (Sales Operations AI Agent) của Công ty của Duydudi. "
                 "Hãy viết bản nhận xét điều hành ngắn gọn (3 phần: Đánh giá KPI & Dự báo ước tính, Rủi ro dữ liệu cần xử lý, Chỉ đạo hành động tuần tới) "
                 "dựa trên số liệu JSON được cung cấp. Nhấn mạnh rõ giá trị dự kiến chỉ là ước tính theo quy tắc trọng số."
             )

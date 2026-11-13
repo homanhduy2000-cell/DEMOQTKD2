@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bình Minh AI Agent Studio • Đề Dự Án 09 (AI301)</title>
+  <title>Duydudi • AI Agent Phân Tích Tiến Độ Cơ Hội &amp; Dự Báo Doanh Số</title>
   
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +13,7 @@
   
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -20,25 +21,25 @@
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            ay: {
-              sidebar: '#1d4ed8',
-              sidebarDark: '#1e3a8a',
-              sidebarDeep: '#172554',
-              cyan: '#00d2ff',
-              cyanDark: '#00a3ff',
-              navyCard: '#1a2b6d',
-              pinkCard: '#ff4d79',
-              pinkDark: '#f43f5e',
-              softBg: '#f4f6fa',
+            chrome: {
+              tabLight: '#dee1e6',
+              tabHoverLight: '#e8eaed',
+              tabActiveLight: '#ffffff',
+              barLight: '#f1f3f4',
+              tabDark: '#202124',
+              tabHoverDark: '#292a2d',
+              tabActiveDark: '#35363a',
+              barDark: '#202124',
+              omniboxLight: '#f1f3f4',
+              omniboxDark: '#202124',
             },
-            portal: {
-              pinkLight: '#fff0f5',
-              pinkSoft: '#fce7f3',
-              pinkMid: '#fbcfe8',
-              pinkVibrant: '#ec4899',
-              pinkDeep: '#db2777',
-              pinkDark: '#be185d',
-              pinkText: '#831843',
+            duydudi: {
+              blue: '#1d4ed8',
+              cyan: '#00d2ff',
+              indigo: '#4f46e5',
+              navy: '#14214d',
+              pink: '#ff4d79',
+              rose: '#f43f5e',
             }
           }
         }
@@ -51,23 +52,21 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      background-color: #f1f5f9;
-      color: #1e293b;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .dark .custom-scroll::-webkit-scrollbar-thumb { background: #475569; }
 
-    /* Hiệu ứng chuyển động mượt mà giữa 2 màn hình */
+    /* Hiệu ứng chuyển cảnh mượt mà */
     .screen-view {
-      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .screen-hidden {
       display: none !important;
       opacity: 0;
-      transform: scale(0.98);
+      transform: scale(0.99);
       pointer-events: none;
     }
     .screen-active {
@@ -76,284 +75,207 @@
       transform: scale(1);
     }
 
-    /* Bo góc chuẩn Studio AY */
-    .studio-canvas {
-      border-radius: 32px;
-      box-shadow: 0 25px 60px -15px rgba(30, 58, 138, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+    /* Phong cách Tab Google Chrome bo tròn tinh tế */
+    .chrome-tab {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+    .chrome-tab.active-light {
+      background-color: #ffffff;
+      color: #1e293b;
+      box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+    }
+    .dark .chrome-tab.active-dark {
+      background-color: #35363a;
+      color: #f8fafc;
+      box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.3);
     }
 
-    /* Hiệu ứng xung nhịp cho nút BẮT ĐẦU QUY TRÌNH (Dragon Ball Portal style - Màu hồng) */
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
-      70% { transform: scale(1.03); box-shadow: 0 0 0 24px rgba(236, 72, 153, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+    /* Hiệu ứng xung nhịp nút BẮT ĐẦU */
+    @keyframes pulse-pink-ring {
+      0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(255, 77, 121, 0.7); }
+      70% { transform: scale(1.02); box-shadow: 0 0 0 16px rgba(255, 77, 121, 0); }
+      100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(255, 77, 121, 0); }
     }
-    .btn-start-process {
-      animation: pulse-ring 2.4s infinite cubic-bezier(0.45, 0, 0.55, 1);
+    .btn-start-hero {
+      animation: pulse-pink-ring 2.2s infinite cubic-bezier(0.45, 0, 0.55, 1);
     }
-    .btn-start-process:hover {
+    .btn-start-hero:hover {
       animation: none;
-      transform: scale(1.06);
-      box-shadow: 0 12px 35px rgba(236, 72, 153, 0.5), 0 0 20px rgba(244, 63, 94, 0.4);
+      transform: scale(1.03);
+      box-shadow: 0 15px 35px -5px rgba(255, 77, 121, 0.5);
     }
 
-    /* Glassmorphism cho Màn hình Hồng */
-    .pink-glass-card {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1.5px solid rgba(244, 114, 182, 0.45);
-      box-shadow: 0 20px 45px -10px rgba(219, 39, 119, 0.18);
-    }
-
-    /* Shimmer card */
-    .shimmer-pink {
-      background: linear-gradient(135deg, #fff1f2 0%, #fce7f3 50%, #fbcfe8 100%);
-    }
-
-    /* 3D Isometric SVG card styling */
-    .isometric-card {
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .isometric-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.12);
+    /* Bo góc chuẩn Studio Canvas */
+    .studio-canvas {
+      border-radius: 24px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+<body class="bg-[#f1f3f4] dark:bg-[#18191c] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
 
   <!-- ========================================================================= -->
-  <!-- TOP SWITCHER BAR: CHUYỂN ĐỔI LINH HOẠT GIỮA 2 GIAO DIỆN MẪU             -->
+  <!-- GOOGLE CHROME STYLE BROWSER WINDOW HEADER (MINIMALIST & CLEAN)           -->
   <!-- ========================================================================= -->
-  <header class="w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 px-4 sm:px-8 py-2.5 flex items-center justify-between shadow-xs">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 via-rose-500 to-indigo-600 flex items-center justify-center text-white font-black text-base shadow-sm">
-        BM
+  <header class="w-full bg-[#dee1e6] dark:bg-[#202124] border-b border-slate-300 dark:border-slate-800 sticky top-0 z-50 select-none shadow-xs">
+    
+    <!-- HÀNG 1: CHROME TAB BAR & WINDOW CONTROLS -->
+    <div class="px-3 pt-2 flex items-center justify-between gap-2 overflow-x-auto custom-scroll">
+      
+      <div class="flex items-center gap-2">
+        <!-- 3 Nút macOS Style Window Controls -->
+        <div class="flex items-center gap-1.5 px-1 mr-1">
+          <span class="w-3 h-3 rounded-full bg-[#ff5f56] inline-block shadow-2xs hover:brightness-90 cursor-pointer" title="Đóng"></span>
+          <span class="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block shadow-2xs hover:brightness-90 cursor-pointer" title="Thu nhỏ"></span>
+          <span class="w-3 h-3 rounded-full bg-[#27c93f] inline-block shadow-2xs hover:brightness-90 cursor-pointer" title="Phóng to"></span>
+        </div>
+
+        <!-- Các Tabs Google Chrome -->
+        <div class="flex items-end gap-1">
+          
+          <!-- Tab 1: Trang Bìa -->
+          <div id="tabNavCover" onclick="switchMainScreen('cover')" class="chrome-tab active-light dark:active-dark px-4 py-1.5 flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-100">
+            <span class="text-sm">🏠</span>
+            <span class="whitespace-nowrap">Duydudi • Trang Bìa</span>
+          </div>
+
+          <!-- Tab 2: Tải Tệp Lên -->
+          <div id="tabNavScreen1" onclick="switchMainScreen('screen1')" class="chrome-tab bg-transparent hover:bg-white/40 dark:hover:bg-white/10 px-4 py-1.5 flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
+            <span class="text-sm">📁</span>
+            <span class="whitespace-nowrap">Tải Tệp Lên</span>
+          </div>
+
+          <!-- Tab 3: Dashboard Doanh Số -->
+          <div id="tabNavScreen2" onclick="switchMainScreen('screen2')" class="chrome-tab bg-transparent hover:bg-white/40 dark:hover:bg-white/10 px-4 py-1.5 flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
+            <span class="text-sm">📊</span>
+            <span class="whitespace-nowrap">Dashboard Doanh Số</span>
+          </div>
+
+          <!-- Nút thêm Tab mới kiểu Chrome -->
+          <button onclick="switchMainScreen('screen1')" title="Mở trang tải tệp lên" class="w-6 h-6 rounded-full hover:bg-white/50 dark:hover:bg-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-bold ml-1 transition">
+            +
+          </button>
+        </div>
       </div>
-      <div>
-        <h1 class="text-sm font-black text-slate-900 leading-tight">CÔNG TY BÌNH MINH • AI301 ĐỀ DỰ ÁN 09</h1>
-        <p class="text-[11px] text-slate-500 font-semibold">AI Agent Phân Tích Tiến Độ Cơ Hội & Dự Kiến Doanh Số B2B</p>
+
+      <!-- Khu vực thương hiệu bên phải -->
+      <div class="flex items-center gap-3 pr-2">
+        <div class="flex items-center gap-1.5 bg-white/40 dark:bg-black/20 px-2.5 py-0.5 rounded-full border border-slate-300/60 dark:border-slate-700/60">
+          <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+          <span class="text-[11px] font-black tracking-wider text-slate-700 dark:text-slate-200 uppercase font-mono">
+            Duydudi AI
+          </span>
+        </div>
       </div>
+
     </div>
 
-    <!-- Nút chuyển đổi 2 chế độ xem -->
-    <div class="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
-      <button id="btnNavScreen1" onclick="switchMainScreen('screen1')" class="px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 bg-pink-500 text-white shadow-xs">
-        <span>🌸</span> Giao Diện 1 (Màn Hồng - Khởi Động)
-      </button>
-      <button id="btnNavScreen2" onclick="switchMainScreen('screen2')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
-        <span>📊</span> Giao Diện 2 (AY Studio Dashboard)
-      </button>
+    <!-- HÀNG 2: GOOGLE CHROME OMNIBOX (ADDRESS BAR) -->
+    <div class="px-3 py-1.5 bg-white dark:bg-[#292a2d] flex items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700/80">
+      
+      <!-- Nút Back, Forward, Reload, Home kiểu Chrome -->
+      <div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+        <button onclick="switchMainScreen('cover')" title="Trang chủ" class="w-7 h-7 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-xs transition">
+          🏠
+        </button>
+        <button onclick="navigateHistoryBack()" title="Quay lại" class="w-7 h-7 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-xs font-bold transition">
+          &#8592;
+        </button>
+        <button onclick="navigateHistoryForward()" title="Tiếp theo" class="w-7 h-7 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-xs font-bold transition">
+          &#8594;
+        </button>
+        <button onclick="switchMainScreen('screen1')" title="Tải lại trang" class="w-7 h-7 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-xs font-bold transition">
+          &#8635;
+        </button>
+      </div>
+
+      <!-- Thanh địa chỉ Chrome Omnibox -->
+      <div class="flex-1 max-w-2xl bg-[#f1f3f4] dark:bg-[#202124] hover:bg-[#e8eaed] dark:hover:bg-[#18191c] rounded-full px-4 py-1 flex items-center justify-between gap-2 border border-transparent focus-within:border-blue-500 focus-within:bg-white dark:focus-within:bg-[#202124] transition shadow-2xs">
+        <div class="flex items-center gap-2 truncate">
+          <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold" title="Kết nối an toàn SSL">🔒</span>
+          <span class="text-xs font-mono font-medium text-slate-700 dark:text-slate-300 truncate">
+            https://duydudi.ai/sales-agent
+          </span>
+        </div>
+        
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Gemini 3.5 Flash Active
+          </span>
+        </div>
+      </div>
+
+      <!-- NÚT CHUYỂN ĐỔI NGÀY / ĐÊM & PROFILE AVATAR -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleThemeMode()" id="btnThemeToggle" title="Chuyển đổi chế độ Ngày / Đêm" 
+                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition border border-slate-200 dark:border-slate-700">
+          <span id="themeToggleIcon" class="text-sm">🌙</span>
+          <span id="themeToggleLabel" class="hidden sm:inline">Chế Độ: Đêm</span>
+        </button>
+
+        <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-pink-500 to-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-2xs cursor-pointer select-none" title="Tài khoản: Duydudi Pro">
+          D
+        </div>
+      </div>
+
     </div>
 
-    <div class="hidden sm:flex items-center gap-2">
-      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Gemini Live: Active
-      </span>
-      <button onclick="openConfigModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition border border-slate-200">
-        ⚙️ Cấu Hình
-      </button>
-    </div>
   </header>
 
 
   <!-- ========================================================================= -->
-  <!-- MÀN HÌNH 1: GIAO DIỆN ĐẦU TIÊN (MÀU HỒNG - DRAGON BALL PORTAL STYLE)      -->
+  <!-- MÀN HÌNH 1: TRANG BÌA ĐƠN GIẢN CÓ CHỮ BẮT ĐẦU (TỐI GIẢN & MÀU HỒNG)        -->
   <!-- ========================================================================= -->
-  <main id="mainScreen1" class="screen-view screen-active flex-1 flex-col items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-hidden" 
-        style="background: radial-gradient(circle at 50% 20%, #ffe4ec 0%, #fff0f5 45%, #fce7f3 80%, #fbcfe8 100%);">
+  <main id="mainScreenCover" class="screen-view screen-active flex-1 flex-col items-center justify-center p-4 sm:p-8 lg:p-14 relative overflow-hidden bg-gradient-to-b from-rose-50/70 via-pink-50/40 to-white dark:from-[#1e1318] dark:via-[#161217] dark:to-[#121316]">
     
-    <!-- Trang trí nền Anime / Cyber Sakura mờ nhẹ -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-300/30 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute top-1/2 left-10 w-64 h-64 bg-pink-200/40 rounded-full blur-2xl pointer-events-none"></div>
+    <!-- Ambient Rose Glow Effects -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-pink-400/15 dark:bg-pink-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-400/15 dark:bg-rose-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-5xl z-10 space-y-8 my-auto">
+    <div class="w-full max-w-3xl z-10 text-center space-y-8 my-auto py-8">
       
-      <!-- TOP BANNER (Dragon Ball Logo & Title Header Style - Tone Hồng) -->
-      <div class="text-center space-y-3">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-100/90 border border-pink-300 text-pink-700 font-extrabold text-xs tracking-wider uppercase shadow-xs">
-          <span>✨</span> HỆ THỐNG AI AGENT ĐỀ 09 • THIẾT KẾ ĐỘC QUYỀN BÌNH MINH <span>✨</span>
-        </div>
-        <h2 class="text-3xl sm:text-5xl font-black text-portal-pinkText tracking-tight drop-shadow-xs">
-          CƠ CHẾ PHÂN TÍCH TIẾN ĐỘ & DỰ BÁO DOANH SỐ
-        </h2>
-        <p class="text-sm sm:text-base text-pink-900/80 font-medium max-w-2xl mx-auto">
-          Quy trình 5 bước tự động hóa: Chuẩn hóa dữ liệu đa nguồn • Loại trừ doanh số ảo • Quét rủi ro tồn đọng • Kiểm duyệt quản lý • Đề xuất Top 5 hành động.
+      <!-- Brand Badge (Màu Hồng) -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-100/80 dark:bg-pink-950/70 border border-pink-300 dark:border-pink-800 text-pink-700 dark:text-pink-300 font-extrabold text-xs tracking-wider uppercase shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-pink-600 dark:bg-pink-400 animate-ping"></span>
+        DUYDUDI • AI SALES OPS
+      </div>
+
+      <!-- Hero Heading - Đổi thành Công ty của Duydudi -->
+      <div class="space-y-4">
+        <span class="text-xs sm:text-sm font-black tracking-widest text-pink-600 dark:text-pink-400 uppercase block">
+          CÔNG TY CỦA DUYDUDI
+        </span>
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+          Phân Tích Tiến Độ Cơ Hội &amp; Dự Báo Doanh Số
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium max-w-xl mx-auto leading-relaxed">
+          Nền tảng AI Agent thông minh giúp Trưởng phòng Kinh doanh tự động đối chiếu dữ liệu kinh doanh B2B, phát hiện rủi ro và dự báo doanh số trọng số chính xác.
         </p>
       </div>
 
-      <!-- KHUNG TRUNG TÂM (CENTRAL PORTAL CARD NHƯ KHUNG ĐĂNG NHẬP Ở ẢNH 2) -->
-      <div class="pink-glass-card rounded-3xl p-6 sm:p-8 max-w-2xl mx-auto space-y-6 relative overflow-hidden">
-        <!-- Đường viền sáng bóng -->
-        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-400 via-rose-500 to-pink-400"></div>
+      <!-- NÚT BẮT ĐẦU TRUNG TÂM NỔI BẬT (CHUYỂN SANG TRANG TẢI TỆP) -->
+      <div class="pt-4 flex flex-col items-center justify-center space-y-3">
+        <button id="btnStartHero" onclick="switchMainScreen('screen1')" 
+                class="btn-start-hero px-14 py-4 sm:py-5 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white font-black text-xl tracking-wider uppercase shadow-xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 border-2 border-white/70 cursor-pointer">
+          <span>BẮT ĐẦU</span>
+          <span class="text-2xl transition-transform group-hover:translate-x-1">&rarr;</span>
+        </button>
 
-        <div class="flex items-center justify-between border-b border-pink-200/80 pb-3">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">⚡</span>
-            <span class="font-black text-slate-800 text-base">CỔNG KHỞI TẠO TIẾN TRÌNH AI AGENT</span>
-          </div>
-          <span class="text-xs font-bold text-pink-700 bg-pink-100 px-2.5 py-1 rounded-full border border-pink-200">
-            Trưởng Phòng KD
+        <span class="text-xs font-bold text-slate-400 dark:text-slate-500">
+          Nhấp nút Bắt đầu để chuyển sang trang tải tệp dữ liệu lên
+        </span>
+
+        <!-- Đánh giá sao uy tín trên trang bìa -->
+        <div class="pt-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-700 shadow-2xs text-xs">
+          <span class="flex text-amber-400 text-sm tracking-wider">★★★★★</span>
+          <span class="text-slate-700 dark:text-slate-300 font-semibold">
+            <strong class="text-slate-900 dark:text-white font-black">4.9 / 5.0</strong> • Đánh giá bởi 28.000+ nhà quản lý
           </span>
-        </div>
-
-        <!-- Các trường điều khiển (Tương tự Form inputs trong mẫu nhưng phục vụ nghiệp vụ Đề 09) -->
-        <div class="space-y-4">
-          <!-- Chọn Nguồn Dữ Liệu -->
-          <div>
-            <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">
-              1. Nguồn Dữ Liệu Đầu Vào
-            </label>
-            <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="setPortalTab('preset')" id="tabPortalPreset" class="py-2.5 px-3 rounded-xl text-xs font-black text-center transition bg-pink-500 text-white shadow-xs border border-pink-600">
-                📂 Kịch Bản Mẫu
-              </button>
-              <button type="button" onclick="setPortalTab('upload')" id="tabPortalUpload" class="py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 text-center transition bg-white/70 hover:bg-white border border-pink-200">
-                📁 Tải File Lên
-              </button>
-              <button type="button" onclick="setPortalTab('gsheet')" id="tabPortalGsheet" class="py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 text-center transition bg-white/70 hover:bg-white border border-pink-200">
-                🔗 Link G-Sheets
-              </button>
-            </div>
-          </div>
-
-          <!-- Khu vực chọn kịch bản Preset -->
-          <div id="portalSectionPreset" class="space-y-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Bộ Kịch Bản Thử Nghiệm Chuẩn:</label>
-              <select id="portalScenarioSelect" class="w-full bg-white/90 border border-pink-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-400">
-                <option value="scenario_1_normal">Kịch bản 1: Trường hợp thông thường (Normal Case - 45 cơ hội)</option>
-                <option value="scenario_0_full300">Kịch bản Chuẩn: Toàn bộ 300 cơ hội Công ty Bình Minh</option>
-                <option value="scenario_2_missing">Kịch bản 2: Thiếu dữ liệu & Thông tin chưa xác nhận (40 cơ hội)</option>
-                <option value="scenario_3_boundary">Kịch bản 3: Ranh giới quy tắc (< 5 cơ hội đủ điều kiện - 25 cơ hội)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Khu vực Tải File Upload (Ẩn mặc định) -->
-          <div id="portalSectionUpload" class="space-y-2 hidden">
-            <label class="block text-xs font-bold text-slate-700">Tải File Excel (.xlsx) đa sheet hoặc nhiều CSV:</label>
-            <div class="border-2 border-dashed border-pink-300 bg-white/60 hover:bg-white rounded-2xl p-4 text-center cursor-pointer transition">
-              <input type="file" id="portalFileInput" multiple accept=".xlsx,.xls,.csv" class="hidden" onchange="handlePortalFilesChosen(this)" />
-              <label for="portalFileInput" class="cursor-pointer block">
-                <span class="text-2xl block mb-1">📥</span>
-                <span id="portalFileNameLabel" class="text-xs font-bold text-pink-700">Nhấp để chọn file Excel/CSV từ máy tính</span>
-                <span class="text-[10px] text-slate-400 block mt-0.5">Hỗ trợ .xlsx chứa 4 sheet hoặc các file Opportunities, Activities, Orders, KPI</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Khu vực Google Sheets (Ẩn mặc định) -->
-          <div id="portalSectionGsheet" class="space-y-2 hidden">
-            <label class="block text-xs font-bold text-slate-700">Dán Link Google Sheets công khai (Viewer):</label>
-            <input type="url" id="portalGsheetUrl" placeholder="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit" 
-                   class="w-full bg-white/90 border border-pink-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-400" />
-          </div>
-
-          <!-- Tham số ngày & API Key -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Đối Chiếu Thống Nhất:</label>
-              <input type="date" id="portalReportDate" value="2026-11-12" class="w-full bg-white/90 border border-pink-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Ngưỡng Không Hoạt Động:</label>
-              <div class="flex items-center gap-2">
-                <input type="number" id="portalInactivityDays" value="14" min="1" max="60" class="w-full bg-white/90 border border-pink-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800" />
-                <span class="text-xs font-bold text-slate-600 whitespace-nowrap">ngày</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Khóa Google Gemini API Key -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Google Gemini API Key (Live AI Analysis):</label>
-            <input type="password" id="portalApiKey" value="AQ.Ab8RN6LqubD2sz-lzVEr8Df6PSbqOVB10Ubndkmpk5k5kxuqIg" 
-                   class="w-full bg-white/90 border border-pink-300 rounded-xl px-3 py-2 text-xs font-mono text-slate-800" />
-          </div>
-        </div>
-
-        <!-- NÚT BẮT ĐẦU QUY TRÌNH (TƯƠNG TỰ NÚT START GAME Ở ẢNH 2 NHƯNG MÀU HỒNG VÀ CHỮ YÊU CẦU) -->
-        <div class="pt-4 flex flex-col items-center justify-center space-y-3">
-          <button id="btnStartPipeline" onclick="executeStartPipeline()" 
-                  class="btn-start-process w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 text-white font-black text-lg tracking-wider uppercase shadow-xl hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-3 border-2 border-white/80 cursor-pointer">
-            <span class="text-2xl">🚀</span>
-            <span>BẮT ĐẦU QUY TRÌNH</span>
-            <span class="text-2xl">⚡</span>
-          </button>
-          <span class="text-[11px] font-bold text-pink-700 animate-bounce">
-            ▼ Nhấp để AI Agent tự động nạp dữ liệu, quét rủi ro & mở Bảng Điều Khiển
-          </span>
-        </div>
-
-        <!-- Đường dẫn vào trực tiếp -->
-        <div class="text-center pt-2 border-t border-pink-200/60">
-          <button onclick="switchMainScreen('screen2')" class="text-xs font-bold text-pink-600 hover:text-pink-800 transition underline underline-offset-4">
-            Hoặc xem nhanh Bảng điều khiển AY Studio Dashboard &rarr;
-          </button>
-        </div>
-      </div>
-
-      <!-- PHẦN DƯỚI: ĐỘI HÌNH AI AGENT (WARRIORS OF SALES OPS - THEO PHẦN DƯỚI ẢNH 2) -->
-      <div class="pink-glass-card rounded-3xl p-6 max-w-4xl mx-auto">
-        <div class="flex flex-col sm:flex-row items-center gap-6">
-          
-          <!-- Avatar Hero bên trái (Tương tự hình nhân vật Majin Buu ở ảnh 2) -->
-          <div class="flex items-center gap-4 shrink-0">
-            <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-600 flex items-center justify-center text-4xl shadow-md border-2 border-white">
-              🤖
-            </div>
-            <div>
-              <span class="text-[10px] font-black uppercase text-pink-600 tracking-wider">AI AGENT CORE</span>
-              <h3 class="text-lg font-black text-slate-800">BÌNH MINH SALES OPS</h3>
-              <p class="text-xs text-slate-600 max-w-xs">
-                Chuyên gia tự động hóa luồng nghiệp vụ B2B, kiểm soát dữ liệu và hỗ trợ ra quyết định.
-              </p>
-            </div>
-          </div>
-
-          <!-- Các kỹ năng nghiệp vụ tròn (Tương tự dàn icon nhân vật tròn ở ảnh 2) -->
-          <div class="flex-1 border-t sm:border-t-0 sm:border-l border-pink-200/80 pt-4 sm:pt-0 sm:pl-6">
-            <span class="text-xs font-extrabold text-slate-700 block mb-2">4 Kỹ Năng & Điểm Chạm Nghiệp Vụ:</span>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              
-              <div class="p-2 rounded-2xl bg-white/70 hover:bg-white border border-pink-200 transition">
-                <div class="w-10 h-10 mx-auto rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg mb-1 shadow-xs">
-                  ⚖️
-                </div>
-                <h4 class="text-[11px] font-extrabold text-slate-800">Chuẩn Hóa</h4>
-                <p class="text-[9px] text-slate-500 font-semibold">Tách Won & Trọng số</p>
-              </div>
-
-              <div class="p-2 rounded-2xl bg-white/70 hover:bg-white border border-pink-200 transition">
-                <div class="w-10 h-10 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg mb-1 shadow-xs">
-                  🔍
-                </div>
-                <h4 class="text-[11px] font-extrabold text-slate-800">Quét Rủi Ro</h4>
-                <p class="text-[9px] text-slate-500 font-semibold">Quá hạn, ngưng >14d</p>
-              </div>
-
-              <div class="p-2 rounded-2xl bg-white/70 hover:bg-white border border-pink-200 transition">
-                <div class="w-10 h-10 mx-auto rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-1 shadow-xs">
-                  👤
-                </div>
-                <h4 class="text-[11px] font-extrabold text-slate-800">Kiểm Duyệt</h4>
-                <p class="text-[9px] text-slate-500 font-semibold">Con người phê duyệt</p>
-              </div>
-
-              <div class="p-2 rounded-2xl bg-white/70 hover:bg-white border border-pink-200 transition">
-                <div class="w-10 h-10 mx-auto rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg mb-1 shadow-xs">
-                  🏆
-                </div>
-                <h4 class="text-[11px] font-extrabold text-slate-800">Top 5 Ưu Tiên</h4>
-                <p class="text-[9px] text-slate-500 font-semibold">Xếp hạng & Hành động</p>
-              </div>
-
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -362,78 +284,271 @@
 
 
   <!-- ========================================================================= -->
-  <!-- MÀN HÌNH 2: GIAO DIỆN THỨ 2 (AY STUDIO DASHBOARD THEO ĐÚNG ẢNH MẪU MỚI)    -->
+  <!-- MÀN HÌNH 2: TRANG TẢI TỆP DỮ LIỆU LÊN (CHUẨN SMALLPDF, TRỐNG & TỐI GIẢN)  -->
   <!-- ========================================================================= -->
-  <main id="mainScreen2" class="screen-view screen-hidden flex-1 p-2 sm:p-5 lg:p-7 justify-center items-center bg-[#eef2f8]">
+  <main id="mainScreen1" class="screen-view screen-hidden flex-1 flex-col items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-hidden bg-slate-50 dark:bg-[#121316]">
     
-    <!-- GRAND STUDIO CANVAS (Bo tròn 32px, bóng mềm, layout 2 cột: Sidebar Xanh + Main Canvas) -->
-    <div class="studio-canvas w-full max-w-[1400px] bg-white overflow-hidden flex flex-col lg:flex-row min-h-[820px]">
+    <div class="w-full max-w-4xl z-10 space-y-6 my-auto">
       
-      <!-- ===================================================================== -->
-      <!-- CỘT 1: SIDEBAR XANH HOÀNG GIA (AY STUDIO DEEP BLUE THEO ẢNH MẪU)       -->
-      <!-- ===================================================================== -->
-      <aside class="w-full lg:w-64 bg-gradient-to-b from-[#1d4ed8] via-[#1e40af] to-[#1e3a8a] text-white p-6 flex flex-col justify-between shrink-0 select-none">
+      <!-- Tiêu đề trang tải file -->
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+          Tải Lên Tệp Dữ Liệu Doanh Số
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+          Tải lên file Excel (.xlsx), CSV (.csv) hoặc gói ZIP (.zip) để AI Agent phân tích và dự báo doanh số
+        </p>
+      </div>
+
+      <!-- Khung Thả File Chính (Chuẩn Smallpdf, hoàn toàn trống đợi người dùng nạp file) -->
+      <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
         
-        <div class="space-y-6">
-          <!-- Logo AY Studio (Theo đúng ảnh mẫu) -->
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center font-black text-xl tracking-tighter text-white border border-white/20">
-              AY
+        <!-- HỘP THẢ FILE XANH DƯƠNG CHUẨN SMALLPDF (VỚI VIỀN ĐỨT INSET BÊN TRONG) -->
+        <div id="smallpdfDropzone" 
+             ondragover="handleDropzoneDragOver(event)" 
+             ondragleave="handleDropzoneDragLeave(event)" 
+             ondrop="handleDropzoneDrop(event)"
+             class="relative bg-[#0070e0] dark:bg-[#1565c0] rounded-2xl p-4 sm:p-6 text-center text-white shadow-lg transition-all duration-200 overflow-hidden select-none">
+          
+          <input type="file" id="portalFileInput" multiple accept=".xlsx,.xls,.csv,.zip" class="hidden" onchange="handlePortalFilesChosen(this)" />
+
+          <!-- Khung viền đứt nét lùi vào trong đúng nguyên mẫu Smallpdf -->
+          <div class="border-2 border-dashed border-white/50 rounded-xl py-10 px-4 sm:px-8 flex flex-col items-center justify-center">
+
+            <!-- Biểu tượng tập tài liệu xếp chồng đúng nguyên mẫu Smallpdf -->
+            <div class="mb-5 flex justify-center">
+              <svg class="w-20 h-20 text-white/90 drop-shadow-sm" viewBox="0 0 100 80" fill="none" stroke="currentColor">
+                <rect x="16" y="10" width="38" height="52" rx="3" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1.8"/>
+                <line x1="22" y1="20" x2="48" y2="20" stroke="white" stroke-width="1.2"/>
+                <line x1="22" y1="28" x2="48" y2="28" stroke="white" stroke-width="1.2"/>
+                <line x1="22" y1="36" x2="48" y2="36" stroke="white" stroke-width="1.2"/>
+                <line x1="22" y1="44" x2="48" y2="44" stroke="white" stroke-width="1.2"/>
+                <line x1="34" y1="10" x2="34" y2="48" stroke="white" stroke-width="1.2"/>
+
+                <rect x="46" y="14" width="38" height="52" rx="3" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1.8"/>
+                <circle cx="65" cy="38" r="10" stroke="white" stroke-width="1.8" fill="none"/>
+                <path d="M 65,38 L 65,28 A 10,10 0 0,1 75,38 Z" fill="white"/>
+                <line x1="52" y1="54" x2="78" y2="54" stroke="white" stroke-width="1.2"/>
+
+                <rect x="28" y="20" width="44" height="54" rx="4" fill="#0070e0" stroke="white" stroke-width="2.2"/>
+                <rect x="34" y="44" width="32" height="18" rx="2" fill="none" stroke="white" stroke-width="1.2"/>
+                <text x="50" y="56" font-size="8.5" font-weight="900" text-anchor="middle" fill="white" font-family="'Plus Jakarta Sans', sans-serif">DATA</text>
+                <line x1="36" y1="30" x2="64" y2="30" stroke="white" stroke-width="1.8"/>
+                <line x1="36" y1="36" x2="56" y2="36" stroke="white" stroke-width="1.8"/>
+              </svg>
+            </div>
+
+            <!-- Nút Trắng "CHỌN CÁC TỆP" có divider và chevron giống hệt Smallpdf -->
+            <div class="relative inline-flex items-center z-10">
+              <button type="button" onclick="triggerFileInputClick()" 
+                      class="px-8 py-3.5 bg-white text-slate-800 rounded-lg shadow-lg hover:shadow-xl hover:bg-slate-50 transition flex items-center font-extrabold text-sm tracking-wider uppercase">
+                <svg class="w-4 h-4 mr-2.5 fill-none stroke-current" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <span>CHỌN CÁC TỆP</span>
+                <span class="h-4 w-px bg-slate-300 mx-3"></span>
+                <span class="text-xs text-slate-600">▼</span>
+              </button>
+            </div>
+
+            <!-- Dòng chữ "hoặc thả các tệp ở đây" đúng nguyên mẫu Smallpdf -->
+            <p class="text-white/95 text-xs sm:text-sm font-medium mt-3.5 tracking-wide">
+              hoặc thả các tệp ở đây
+            </p>
+
+            <!-- Card hiển thị tệp đã chọn (Mặc định ẩn, chỉ hiện khi người dùng chọn tệp) -->
+            <div id="dropzoneSelectedCard" class="hidden mt-5 inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/20 backdrop-blur-md border border-white/40 text-white max-w-full">
+              <span class="text-xl">📊</span>
+              <div class="text-left truncate">
+                <strong id="dropzoneFileName" class="text-xs sm:text-sm font-bold block text-white truncate max-w-xs sm:max-w-md"></strong>
+                <span id="dropzoneFileSize" class="text-[10px] text-blue-100 block font-medium"></span>
+              </div>
+              <button type="button" onclick="clearSelectedFiles(event)" class="w-5 h-5 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-[10px] ml-1 transition" title="Xóa tệp">✕</button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Tùy chọn dán link Google Sheets (Tối giản) -->
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-base">🔗</span>
+            <span class="font-bold text-slate-700 dark:text-slate-300">Hoặc dán Link Google Sheets:</span>
+          </div>
+          <input type="url" id="portalGsheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit" 
+                 class="w-full sm:flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-3.5 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-[#0070e0] text-slate-800 dark:text-slate-100" />
+        </div>
+
+        <!-- NÚT BẮT ĐẦU PHÂN TÍCH -->
+        <div class="pt-2 flex flex-col items-center justify-center space-y-2">
+          <button id="btnStartPipeline" onclick="executeStartPipeline()" 
+                  class="w-full sm:w-auto px-12 py-4 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white font-black text-base tracking-wider uppercase shadow-xl hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-3 cursor-pointer">
+            <span>🚀 BẮT ĐẦU PHÂN TÍCH</span>
+            <span>⚡</span>
+          </button>
+          <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500">
+            Hệ thống sẽ tự động xử lý và chuyển thẳng sang Bàn làm việc Dashboard
+          </span>
+        </div>
+
+        <!-- Cấu hình nâng cao (Thu gọn, không gây rối mắt) -->
+        <details class="text-xs text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/60 rounded-xl p-3">
+          <summary class="cursor-pointer font-bold select-none hover:text-slate-700 dark:hover:text-slate-200">
+            ⚙️ Cấu hình nâng cao (Ngày đối chiếu &amp; API Key)
+          </summary>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 mt-2 border-t border-slate-100 dark:border-slate-700/60">
+            <div>
+              <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Ngày Đối Chiếu Thống Nhất:</label>
+              <input type="date" id="portalReportDate" value="2026-11-12" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1.5 font-bold text-slate-800 dark:text-slate-100 text-xs" />
             </div>
             <div>
-              <span class="text-lg font-black tracking-tight text-white block leading-none">AY Studio</span>
-              <span class="text-[10px] text-blue-200 font-semibold">Bình Minh AI Agent</span>
+              <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Google Gemini API Key:</label>
+              <input type="password" id="portalApiKey" value="AQ.Ab8RN6LqubD2sz-lzVEr8Df6PSbqOVB10Ubndkmpk5k5kxuqIg" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1.5 font-mono text-xs text-slate-800 dark:text-slate-100" />
+            </div>
+          </div>
+        </details>
+
+        <!-- PHẦN MÔ TẢ 2 CỘT DƯỚI KHUNG TẢI FILE CHUẨN SMALLPDF -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-5 text-left border-t border-slate-100 dark:border-slate-700/60">
+          <div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+              Tải lên tệp dữ liệu kinh doanh B2B trực tuyến (Excel, CSV, ZIP). Hệ thống AI Agent tự động thẩm định schema, khử trùng lặp và phân tách doanh số thực tế khỏi cơ hội mở chỉ trong vài giây.
+            </p>
+          </div>
+          
+          <ul class="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 font-semibold">
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs font-black shadow-xs">✓</span>
+              <span class="leading-tight">Tự động nhận diện và ghép nối 4 bảng: Opportunities, Activities, Orders, KPI Targets</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs font-black shadow-xs">✓</span>
+              <span class="leading-tight">Cách ly dữ liệu lỗi, mâu thuẫn vào Quarantine Zone (data_quarantine.csv) an toàn</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs font-black shadow-xs">✓</span>
+              <span class="leading-tight">Hỗ trợ đầy đủ các định dạng: Excel (.xlsx, .xls), CSV (.csv) và Gói nén (.zip)</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- KHU VỰC ĐÁNH GIÁ SAO (STAR RATING) CHUẨN SMALLPDF / SAAS -->
+        <div class="pt-5 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/80 dark:bg-slate-900/60 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
+          
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl font-bold shrink-0 shadow-xs">
+              ⭐
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm sm:text-base font-black text-slate-900 dark:text-white">4.9 / 5.0</span>
+                <span class="text-xs font-black text-amber-500 tracking-wider">★★★★★</span>
+                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">(28.450 đánh giá)</span>
+              </div>
+              <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                Bạn thấy công cụ của <strong>Công ty của Duydudi</strong> như thế nào? Bấm vào sao để đánh giá:
+              </p>
             </div>
           </div>
 
-          <!-- Profile / Workspace Pill: "8hourStudio Pro member" (Theo đúng ảnh mẫu) -->
+          <!-- Bộ sao tương tác -->
+          <div class="flex flex-col items-center sm:items-end gap-1 shrink-0">
+            <div id="interactiveStarContainer" class="flex items-center gap-1 text-2xl cursor-pointer select-none" onmouseleave="resetStars()">
+              <span class="star-rating-item text-amber-400 hover:scale-125 transition-transform" data-rating="1" onclick="submitUserRating(1)" onmouseover="highlightStars(1)">★</span>
+              <span class="star-rating-item text-amber-400 hover:scale-125 transition-transform" data-rating="2" onclick="submitUserRating(2)" onmouseover="highlightStars(2)">★</span>
+              <span class="star-rating-item text-amber-400 hover:scale-125 transition-transform" data-rating="3" onclick="submitUserRating(3)" onmouseover="highlightStars(3)">★</span>
+              <span class="star-rating-item text-amber-400 hover:scale-125 transition-transform" data-rating="4" onclick="submitUserRating(4)" onmouseover="highlightStars(4)">★</span>
+              <span class="star-rating-item text-amber-400 hover:scale-125 transition-transform" data-rating="5" onclick="submitUserRating(5)" onmouseover="highlightStars(5)">★</span>
+            </div>
+            <span id="starRatingFeedbackText" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 transition-all">
+              Tuyệt vời! Đã đánh giá 5/5 ⭐
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- ========================================================================= -->
+  <!-- MÀN HÌNH 3: AY STUDIO DASHBOARD (ĐÚNG THEO ẢNH MẪU 2F641B80 & DỄ NHÌN)    -->
+  <!-- ========================================================================= -->
+  <main id="mainScreen2" class="screen-view screen-hidden flex-1 p-2 sm:p-5 lg:p-7 justify-center items-center bg-slate-100 dark:bg-[#121316]">
+    
+    <!-- GRAND STUDIO CANVAS -->
+    <div class="studio-canvas w-full max-w-[1400px] bg-white dark:bg-[#1a1b1e] overflow-hidden flex flex-col lg:flex-row min-h-[820px] shadow-sm border border-slate-200 dark:border-slate-800">
+      
+      <!-- CỘT 1: SIDEBAR XANH HOÀNG GIA (ĐÚNG THEO MẪU 2F641B80) -->
+      <aside class="w-full lg:w-64 bg-gradient-to-b from-[#1d4ed8] via-[#1e40af] to-[#1e3a8a] text-white p-6 flex flex-col justify-between shrink-0 select-none">
+        
+        <div class="space-y-6">
+          
+          <!-- Logo Duydudi Studio (Thay cho AY Studio) -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center font-black text-xl tracking-tighter text-white border border-white/20">
+              DD
+            </div>
+            <div>
+              <span class="text-lg font-black tracking-tight text-white block leading-none">Duydudi</span>
+              <span class="text-[10px] text-blue-200 font-semibold">AI Sales Ops Studio</span>
+            </div>
+          </div>
+
+          <!-- Profile / Workspace Pill: "Duydudi Pro member" (Thay cho 8hourStudio) -->
           <div class="bg-[#172554]/70 border border-blue-400/30 rounded-2xl p-3 flex items-center justify-between">
             <div class="flex items-center gap-2.5">
               <div class="w-8 h-8 rounded-lg bg-[#00d2ff] text-[#172554] font-black flex items-center justify-center text-xs">
-                AY
+                DD
               </div>
               <div>
-                <h4 class="text-xs font-black text-white leading-tight">8hourStudio</h4>
+                <h4 class="text-xs font-black text-white leading-tight">Duydudi</h4>
                 <span class="text-[10px] text-blue-200">Pro member • Q4/2026</span>
               </div>
             </div>
             <span class="text-blue-300 text-xs">▼</span>
           </div>
 
-          <!-- MENU ĐIỀU HƯỚNG (Theo đúng style và icon outline trong ảnh mẫu) -->
+          <!-- MENU ĐIỀU HƯỚNG THEO ĐÚNG MẪU -->
           <nav class="space-y-2">
             
-            <!-- Active Item: Nút bo tròn màu Cyan sáng bóng "Dashboard" -->
+            <!-- Dashboard Active Item (Màu Cyan #00d2ff nổi bật như ảnh mẫu) -->
             <button onclick="switchStudioTab('overview')" id="navItemDashboard" class="w-full py-3 px-4 rounded-2xl bg-[#00d2ff] text-[#0f172a] font-extrabold text-xs flex items-center gap-3 shadow-md hover:brightness-105 transition">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
               <span>Dashboard</span>
             </button>
 
-            <!-- Orders: Xem danh sách cơ hội -->
+            <!-- Orders (Cơ Hội) -->
             <button onclick="openStudioModal('pipeline')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
               <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               <span>Orders (Cơ Hội)</span>
             </button>
 
-            <!-- Payout: Doanh số đã ghi nhận -->
+            <!-- Payout (Doanh Số Chốt) -->
             <button onclick="openStudioModal('wonOrders')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
               <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
               <span>Payout (Doanh Số Chốt)</span>
             </button>
 
-            <!-- Earning: Doanh số dự kiến ước tính -->
+            <!-- Earning (Dự Kiến Ước Tính) -->
             <button onclick="openStudioModal('forecast')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
               <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               <span>Earning (Dự Kiến Ước Tính)</span>
             </button>
 
-            <!-- Analytics: Báo cáo KPI 10 Sales -->
+            <!-- Analytics (KPI 10 Sales) -->
             <button onclick="openStudioModal('kpiReps')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
               <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
               <span>Analytics (KPI 10 Sales)</span>
             </button>
 
-            <!-- Review: Bước 4 Con người kiểm duyệt -->
+            <!-- Review Bước 4 -->
             <button onclick="openStudioModal('anomalies')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center justify-between transition">
               <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -442,57 +557,83 @@
               <span id="badgeSidebarAnomalies" class="px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[10px] font-black">0</span>
             </button>
 
-            <!-- Priority: Top 5 Cơ hội -->
+            <!-- Priority Bước 5 -->
             <button onclick="openStudioModal('top5')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
               <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
               <span>Top 5 Ưu Tiên Tuần Tới</span>
             </button>
 
-            <!-- Audit Logs: Truy vết -->
+            <!-- Audit Logs -->
             <button onclick="openStudioModal('audit')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
               <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
               <span>Audit Trail (Nhật Ký)</span>
             </button>
+
+            <!-- Architecture E2E -->
+            <button onclick="openStudioModal('architecture')" class="w-full py-2.5 px-4 rounded-xl text-blue-100 hover:bg-white/10 hover:text-white font-semibold text-xs flex items-center gap-3 transition">
+              <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+              <span>Kiến Trúc E2E (4 Tầng)</span>
+            </button>
+
           </nav>
         </div>
 
-        <!-- Schedule / Khởi động lại (Phần dưới sidebar theo mẫu) -->
+        <!-- Footer Sidebar -->
         <div class="pt-6 border-t border-blue-400/20 space-y-2">
-          <button onclick="switchMainScreen('screen1')" class="w-full py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center justify-between transition">
-            <span>🌸 Về Màn Khởi Động</span>
+          <button onclick="switchMainScreen('cover')" class="w-full py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center justify-between transition">
+            <span>🏠 Về Trang Bìa</span>
             <span>&rarr;</span>
           </button>
           <div class="text-[10px] text-blue-200/80 text-center font-mono">
-            API: Gemini 3.5 Flash Active
+            Duydudi AI Engine • Gemini 3.5
           </div>
         </div>
 
       </aside>
 
 
-      <!-- ===================================================================== -->
-      <!-- CỘT 2: KHU VỰC NỘI DUNG CHÍNH (CANVAS DASHBOARD THEO ĐÚNG ẢNH MẪU MỚI)   -->
-      <!-- ===================================================================== -->
-      <section class="flex-1 bg-ay-softBg p-4 sm:p-7 flex flex-col justify-between overflow-y-auto custom-scroll">
+      <!-- CỘT 2: KHU VỰC NỘI DUNG CHÍNH (CANVAS DASHBOARD) -->
+      <section class="flex-1 bg-[#f8fafc] dark:bg-[#151619] p-4 sm:p-7 flex flex-col justify-between overflow-y-auto custom-scroll">
         
-        <div class="space-y-6">
+        <!-- TRẠNG THÁI TRỐNG: KHI CHƯA TẢI TỆP LÊN PHÂN TÍCH -->
+        <div id="dashboardEmptyState" class="flex-1 flex flex-col items-center justify-center p-8 sm:p-14 text-center my-auto space-y-4">
+          <div class="w-20 h-20 rounded-3xl bg-blue-50 dark:bg-slate-800 text-[#0070e0] flex items-center justify-center text-4xl shadow-sm border border-blue-100 dark:border-slate-700">
+            📁
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white">Chưa Có Dữ Liệu Phân Tích</h3>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+              Vui lòng chuyển sang trang <strong>Tải Tệp Lên</strong> để nạp tệp Excel (.xlsx), CSV (.csv) hoặc Google Sheets của bạn. Hệ thống AI Agent sẽ tự động đối chiếu dữ liệu, phát hiện rủi ro và dự báo doanh số tại đây.
+            </p>
+          </div>
+          <button onclick="switchMainScreen('screen1')" class="px-8 py-3.5 rounded-2xl bg-[#0070e0] hover:bg-[#005fb8] text-white font-extrabold text-xs tracking-wider uppercase shadow-lg hover:shadow-xl transition flex items-center gap-2.5">
+            <span>📤 CHUYỂN SANG TRANG TẢI TỆP LÊN</span>
+            <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- NỘI DUNG DASHBOARD THỰC TẾ (CHỈ HIỂN THỊ KHI ĐÃ TẢI DỮ LIỆU & PHÂN TÍCH) -->
+        <div id="dashboardContent" class="space-y-6 hidden">
           
-          <!-- HÀNG TIÊU ĐỀ: "Project Overview" & Bộ chọn thời gian (Theo đúng ảnh mẫu) -->
+          <!-- HÀNG TIÊU ĐỀ: "Project Overview" & Bộ chọn thời gian -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">Project Overview</h2>
-              <p id="dashboardSubDate" class="text-xs text-slate-500 font-semibold">
-                Ngày đối chiếu: 2026-11-12 • 10 Nhân viên • Đề Dự Án 09 Công ty Bình Minh
+              <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight">Project Overview</h2>
+              <p id="dashboardSubDate" class="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                Ngày đối chiếu: 2026-11-12 • 10 Nhân viên • Công ty của Duydudi
               </p>
             </div>
 
             <!-- Quick Action Pills -->
             <div class="flex items-center gap-2">
-              <span id="labelCurrentDataset" class="px-3 py-1 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs">
-                Kịch bản 1: Thông thường
+              <span id="labelCurrentDataset" class="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-2xs">
+                Dữ liệu tải lên
               </span>
+              <button onclick="switchMainScreen('screen1')" class="px-3 py-1 bg-pink-50 dark:bg-pink-950/80 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800 text-xs font-bold rounded-xl transition hover:bg-pink-100 flex items-center gap-1">
+                <span>📁</span> Đổi Nguồn
+              </button>
               <button onclick="triggerRunAgent(false)" class="px-3 py-1 bg-[#1d4ed8] hover:bg-[#1e40af] text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1">
-                <span>🔄</span> Cập nhật
+                <span>🔄</span> Chạy Lại
               </button>
             </div>
           </div>
@@ -502,9 +643,8 @@
           <!-- ================================================================= -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             
-            <!-- THẺ 1 (Góc trên phải trong ảnh): XANH CYAN GRADIENT VỚI MŨI TÊN "BALANCE WILL COME" -->
-            <!-- Chuyển thành: Doanh số thực tế đã chốt (Closed Won) -->
-            <div onclick="openStudioModal('wonOrders')" class="isometric-card cursor-pointer rounded-2xl p-5 bg-gradient-to-br from-[#00d2ff] to-[#00a3ff] text-white flex flex-col justify-between min-h-[130px] shadow-sm relative overflow-hidden group">
+            <!-- THẺ 1: XANH CYAN GRADIENT VỚI MŨI TÊN (TƯƠNG ỨNG Ô $1,874 TRÊN MẪU) -->
+            <div onclick="openStudioModal('wonOrders')" class="cursor-pointer rounded-2xl p-5 bg-gradient-to-br from-[#00d2ff] to-[#00a3ff] text-white flex flex-col justify-between min-h-[130px] shadow-sm relative overflow-hidden group hover:scale-[1.02] transition">
               <div class="flex justify-between items-start">
                 <span id="metricRecordedRev" class="text-2xl sm:text-3xl font-black tracking-tight leading-none">
                   5.47 Tỷ
@@ -519,53 +659,46 @@
               </div>
             </div>
 
-            <!-- THẺ 2 (Giữa trái trong ảnh): TRẮNG TINH VỚI HÌNH KHỐI 3D "5 PROJECT ACTIVE" -->
-            <!-- Chuyển thành: Nhân viên KD & Cơ hội đang mở -->
-            <div onclick="openStudioModal('pipeline')" class="isometric-card cursor-pointer rounded-2xl p-5 bg-white text-slate-800 flex items-center justify-between min-h-[130px] shadow-sm border border-slate-100">
+            <!-- THẺ 2: TRẮNG TINH VỚI HÌNH KHỐI 3D (TƯƠNG ỨNG Ô "5 Project active") -->
+            <div onclick="openStudioModal('pipeline')" class="cursor-pointer rounded-2xl p-5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white flex items-center justify-between min-h-[130px] shadow-sm border border-slate-200/80 dark:border-slate-700/80 hover:scale-[1.02] transition">
               <div class="space-y-1">
-                <span id="metricOpenDealsCount" class="text-3xl sm:text-4xl font-black text-slate-900 leading-none">
-                  45+
+                <span id="metricOpenDealsCount" class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white leading-none">
+                  31+
                 </span>
-                <span class="text-xs font-bold text-slate-500 block">Cơ hội đang mở (Project active)</span>
-                <span class="text-[10px] text-slate-400 font-semibold block">Đã hợp nhất & deduplicate</span>
+                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 block">Cơ hội đang mở (Active)</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block">Đã gộp trùng &amp; chuẩn hóa</span>
               </div>
               
-              <!-- 3D ISOMETRIC CUBES SVG ILLUSTRATION (Theo đúng hình khối bậc thang trong ảnh mẫu) -->
+              <!-- 3D Isometric SVG -->
               <div class="w-16 h-16 shrink-0">
                 <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">
-                  <!-- Block 1 (Cyan) -->
                   <polygon points="30,45 50,33 70,45 50,57" fill="#38bdf8" />
                   <polygon points="30,45 50,57 50,75 30,63" fill="#0284c7" />
                   <polygon points="50,57 70,45 70,63 50,75" fill="#0369a1" />
-                  <!-- Block 2 (Purple - Higher step) -->
                   <polygon points="50,25 70,13 90,25 70,37" fill="#c084fc" />
                   <polygon points="50,25 70,37 70,55 50,43" fill="#9333ea" />
                   <polygon points="70,37 90,25 90,43 70,55" fill="#7e22ce" />
-                  <!-- Little marker sphere -->
                   <circle cx="70" cy="10" r="4" fill="#fbbf24" />
                 </svg>
               </div>
             </div>
 
-            <!-- THẺ 3 (Giữa phải trong ảnh): XANH NAVY ĐẬM VỚI KHỐI 3D "79 CLIENT OFFERS" -->
-            <!-- Chuyển thành: Tổng số cơ hội theo dõi (300 hồ sơ) -->
-            <div onclick="openStudioModal('kpiReps')" class="isometric-card cursor-pointer rounded-2xl p-5 bg-[#1a2b6d] text-white flex items-center justify-between min-h-[130px] shadow-sm">
+            <!-- THẺ 3: XANH NAVY ĐẬM VỚI KHỐI 3D (TƯƠNG ỨNG Ô "79 Client offers") -->
+            <div onclick="openStudioModal('kpiReps')" class="cursor-pointer rounded-2xl p-5 bg-[#14214d] dark:bg-[#141d3d] text-white flex items-center justify-between min-h-[130px] shadow-sm hover:scale-[1.02] transition">
               <div class="space-y-1">
                 <span id="metricTotalInputCount" class="text-3xl sm:text-4xl font-black text-white leading-none">
-                  300
+                  45
                 </span>
-                <span class="text-xs font-bold text-blue-200 block">Tổng cơ hội (Client offers)</span>
+                <span class="text-xs font-bold text-blue-200 block">Tổng cơ hội (Pipeline)</span>
                 <span class="text-[10px] text-blue-300/70 font-semibold block">10 Nhân viên kinh doanh</span>
               </div>
 
-              <!-- 3D ISOMETRIC STACKED STEPS SVG (Khối màu hồng tím bậc thang trong ảnh mẫu) -->
+              <!-- 3D Isometric SVG -->
               <div class="w-16 h-16 shrink-0">
                 <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">
-                  <!-- Base Pink step -->
                   <polygon points="40,55 60,43 80,55 60,67" fill="#f472b6" />
                   <polygon points="40,55 60,67 60,85 40,73" fill="#db2777" />
                   <polygon points="60,67 80,55 80,73 60,85" fill="#be185d" />
-                  <!-- Top Golden step -->
                   <polygon points="60,35 75,26 90,35 75,44" fill="#fde047" />
                   <polygon points="60,35 75,44 75,58 60,49" fill="#eab308" />
                   <polygon points="75,44 90,35 90,49 75,58" fill="#ca8a04" />
@@ -573,12 +706,11 @@
               </div>
             </div>
 
-            <!-- THẺ 4 (Góc dưới trái trong ảnh): HỒNG RADIANT VỚI MŨI TÊN "$2,475 TOTAL PAYOUT THIS MONTH" -->
-            <!-- Chuyển thành: Doanh số dự kiến ước tính theo trọng số (Kèm ghi chú chuẩn quy tắc) -->
-            <div onclick="openStudioModal('forecast')" class="isometric-card cursor-pointer rounded-2xl p-5 bg-gradient-to-br from-[#ff4d79] to-[#f43f5e] text-white flex flex-col justify-between min-h-[130px] shadow-sm relative group">
+            <!-- THẺ 4: HỒNG RADIANT (TƯƠNG ỨNG Ô $2,475 HỒNG TRÊN ẢNH MẪU) -->
+            <div onclick="openStudioModal('forecast')" class="cursor-pointer rounded-2xl p-5 bg-gradient-to-br from-[#ff4d79] to-[#f43f5e] text-white flex flex-col justify-between min-h-[130px] shadow-sm relative group hover:scale-[1.02] transition">
               <div class="flex justify-between items-start">
                 <span id="metricForecastRev" class="text-2xl sm:text-3xl font-black tracking-tight leading-none">
-                  2.48 Tỷ
+                  10.80 Tỷ
                 </span>
                 <div class="w-7 h-7 rounded-full bg-white/25 flex items-center justify-center text-white font-bold group-hover:translate-x-1 transition text-sm">
                   &rarr;
@@ -596,33 +728,30 @@
 
 
           <!-- ================================================================= -->
-          <!-- HÀNG PHỤ: BIỂU ĐỒ DONUT 3D & TỔNG QUAN PHÂN BỔ (THEO ẢNH MẪU)      -->
+          <!-- HÀNG PHỤ: BIỂU ĐỒ DONUT 3D & NHẬN XÉT GEMINI LIVE AI               -->
           <!-- ================================================================= -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
-            <!-- BIỂU ĐỒ DONUT 3D CARD (Theo đúng hình bánh Donut 3D nghiêng trong ảnh mẫu) -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between">
-              <!-- 3D Donut SVG Rendering -->
+            <!-- BIỂU ĐỒ DONUT 3D CARD (THEO ĐÚNG MẪU 2F641B80) -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
               <div class="w-28 h-28 relative flex items-center justify-center shrink-0">
                 <svg viewBox="0 0 120 120" class="w-full h-full transform -rotate-12">
-                  <!-- Slices: Closed Won (Blue), Forecast Open (Cyan), Closed Lost (Orange) -->
                   <circle cx="60" cy="60" r="42" fill="none" stroke="#2563eb" stroke-width="20" stroke-dasharray="140 264" stroke-dashoffset="0" />
                   <circle cx="60" cy="60" r="42" fill="none" stroke="#00d2ff" stroke-width="20" stroke-dasharray="75 264" stroke-dashoffset="-145" />
                   <circle cx="60" cy="60" r="42" fill="none" stroke="#f97316" stroke-width="20" stroke-dasharray="45 264" stroke-dashoffset="-225" />
-                  <!-- Inner hole shadow for 3D bevel look -->
-                  <circle cx="60" cy="60" r="28" fill="#ffffff" />
+                  <circle cx="60" cy="60" r="28" class="fill-white dark:fill-slate-800" />
                 </svg>
               </div>
 
-              <!-- Legend (Theo đúng 3 ô màu vuông trong ảnh mẫu) -->
-              <div class="space-y-2 text-xs font-bold text-slate-700">
+              <!-- Legend (Project, Client tips, Platform fee) -->
+              <div class="space-y-2 text-xs font-bold text-slate-700 dark:text-slate-300">
                 <div class="flex items-center gap-2">
                   <span class="w-3 h-3 rounded-sm bg-[#2563eb]"></span>
                   <span>Project (Won: 5.47T)</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="w-3 h-3 rounded-sm bg-[#00d2ff]"></span>
-                  <span>Client tips (Mở: 2.48T)</span>
+                  <span>Client tips (Mở: 10.8T)</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="w-3 h-3 rounded-sm bg-[#f97316]"></span>
@@ -632,24 +761,24 @@
             </div>
 
             <!-- Card Tóm tắt Đánh giá Gemini Live AI -->
-            <div class="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
+            <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-2 mb-2">
                 <div class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider">
+                  <h3 class="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                     Nhận Xét Điều Hành Tức Thời (Gemini Live AI Brief)
                   </h3>
                 </div>
-                <span class="text-[10px] font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">
+                <span class="text-[10px] font-mono font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950 px-2 py-0.5 rounded-md border border-pink-200 dark:border-pink-800">
                   gemini-3.5-flash
                 </span>
               </div>
-              <p id="dashboardAiExecutiveBrief" class="text-xs text-slate-600 leading-relaxed font-medium line-clamp-3">
+              <p id="dashboardAiExecutiveBrief" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium line-clamp-3">
                 Đang nạp nhận xét điều hành từ AI Agent... Hệ thống tự động phân tách doanh số thực tế, loại trừ 450 triệu doanh số ảo và xếp hạng 5 cơ hội trọng điểm.
               </p>
               <div class="flex items-center justify-between pt-2 text-[11px] font-bold">
-                <span class="text-slate-400">Tuân thủ: Rule 09 • Không bịa đặt số liệu</span>
-                <button onclick="openStudioModal('geminiDetail')" class="text-indigo-600 hover:text-indigo-800 transition">
+                <span class="text-slate-400 dark:text-slate-500">Tuân thủ: Rule 09 • Dựa 100% trên dữ liệu thực tế</span>
+                <button onclick="openStudioModal('geminiDetail')" class="text-pink-600 dark:text-pink-400 hover:underline">
                   Xem toàn văn nhận xét &rarr;
                 </button>
               </div>
@@ -663,22 +792,21 @@
           <!-- ================================================================= -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
             
-            <!-- CỘT TRÁI: "Earning Summary" & Earning Statistics Line Wave Chart -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+            <!-- CỘT TRÁI: Earning Summary (THEO ĐÚNG MẪU 2F641B80) -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between">
               <div class="flex items-center justify-between mb-2">
                 <div>
-                  <h3 class="text-base font-black text-slate-800">Earning Summary</h3>
-                  <span class="text-xs text-slate-400 font-semibold">Earning Statistics</span>
+                  <h3 class="text-base font-black text-slate-800 dark:text-white">Earning Summary</h3>
+                  <span class="text-xs text-slate-400 dark:text-slate-500 font-semibold">Earning Statistics</span>
                 </div>
-                <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
+                <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                   <span class="w-2 h-2 rounded-full bg-amber-500"></span> Doanh số 10 Sales (VNĐ)
                 </div>
               </div>
 
-              <!-- Clean Smooth Wave Chart with Golden/Orange line matching image -->
+              <!-- Smooth Wave Chart với đỉnh vàng sáng -->
               <div class="w-full h-48 relative flex items-end pt-4 pb-2">
-                <!-- Y-Axis labels (Matching $1000, $2000, $3000, $4000, $5000 in image) -->
-                <div class="flex flex-col justify-between h-full text-[10px] font-mono text-slate-300 pr-3 pb-4">
+                <div class="flex flex-col justify-between h-full text-[10px] font-mono text-slate-400 pr-3 pb-4">
                   <span>1.5T</span>
                   <span>1.0T</span>
                   <span>500M</span>
@@ -686,25 +814,20 @@
                   <span>0</span>
                 </div>
 
-                <!-- SVG Curve with Peak Glow Dot -->
                 <div class="flex-1 h-full relative">
                   <svg viewBox="0 0 400 160" preserveAspectRatio="none" class="w-full h-full overflow-visible">
-                    <!-- Light Grid lines -->
-                    <line x1="0" y1="30" x2="400" y2="30" stroke="#f1f5f9" stroke-width="1" />
-                    <line x1="0" y1="70" x2="400" y2="70" stroke="#f1f5f9" stroke-width="1" />
-                    <line x1="0" y1="110" x2="400" y2="110" stroke="#f1f5f9" stroke-width="1" />
+                    <line x1="0" y1="30" x2="400" y2="30" stroke="#94a3b8" stroke-opacity="0.2" stroke-width="1" />
+                    <line x1="0" y1="70" x2="400" y2="70" stroke="#94a3b8" stroke-opacity="0.2" stroke-width="1" />
+                    <line x1="0" y1="110" x2="400" y2="110" stroke="#94a3b8" stroke-opacity="0.2" stroke-width="1" />
 
-                    <!-- Smooth Amber Wave Path (Matching the golden wave line in image) -->
                     <path d="M 0,130 C 50,140 80,100 120,110 C 160,120 200,60 250,85 C 290,105 320,30 360,25 L 390,40" 
                           fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" />
                     
-                    <!-- Glowing Peak Marker Dot (As shown in image) -->
                     <circle cx="360" cy="25" r="7" fill="#ffffff" stroke="#f59e0b" stroke-width="4" class="drop-shadow-md" />
                     <circle cx="360" cy="25" r="2.5" fill="#f59e0b" />
                   </svg>
 
-                  <!-- X-Axis Labels (10 Sales Reps) -->
-                  <div class="flex justify-between text-[10px] font-mono text-slate-400 pt-1">
+                  <div class="flex justify-between text-[10px] font-mono text-slate-400 dark:text-slate-500 pt-1">
                     <span>NV01</span>
                     <span>NV03</span>
                     <span>NV05</span>
@@ -714,41 +837,37 @@
                 </div>
               </div>
 
-              <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
-                <span class="text-slate-500">Mức hoàn thành toàn công ty: <strong id="companyAttainPct" class="text-slate-900">78.1%</strong></span>
-                <button onclick="openStudioModal('kpiReps')" class="text-blue-600 hover:text-blue-800 transition">
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs font-bold">
+                <span class="text-slate-500 dark:text-slate-400">Mức hoàn thành toàn công ty: <strong id="companyAttainPct" class="text-slate-900 dark:text-white">31.6% (Dự kiến 94%)</strong></span>
+                <button onclick="openStudioModal('kpiReps')" class="text-blue-600 dark:text-blue-400 hover:underline">
                   Chi tiết 10 nhân viên &rarr;
                 </button>
               </div>
             </div>
 
-            <!-- CỘT PHẢI: "Recent Orders" (DANH SÁCH CÁC CƠ HỘI TRỌNG ĐIỂM THEO ẢNH MẪU) -->
-            <!-- Layout: Costumer | Date với icon vuông màu Xanh navy, Hồng, Cyan -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+            <!-- CỘT PHẢI: Recent Orders (THEO ĐÚNG MẪU 2F641B80) -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between mb-3">
-                  <h3 class="text-base font-black text-slate-800">Recent Orders</h3>
-                  <button onclick="openStudioModal('top5')" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition">
+                  <h3 class="text-base font-black text-slate-800 dark:text-white">Recent Orders</h3>
+                  <button onclick="openStudioModal('top5')" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">
                     Xem tất cả &rarr;
                   </button>
                 </div>
 
-                <!-- Table Header (Costumer | Date) -->
-                <div class="flex justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-100">
+                <div class="flex justify-between text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider pb-2 border-b border-slate-100 dark:border-slate-700">
                   <span>Costumer</span>
                   <span>Date</span>
                 </div>
 
-                <!-- Danh sách Items (Tương tự Andreas B, Alexander M, Michel Brout) -->
-                <div id="recentOrdersContainer" class="divide-y divide-slate-100 pt-1">
-                  <!-- Rendered dynamically by JavaScript -->
+                <div id="recentOrdersContainer" class="divide-y divide-slate-100 dark:divide-slate-700/60 pt-1">
+                  <!-- Rendered dynamically by JS -->
                 </div>
               </div>
 
-              <!-- Quick Action Bar -->
-              <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
-                <span class="text-slate-500">Top 5 ưu tiên tuần tới được tính theo điểm số</span>
-                <button onclick="openStudioModal('anomalies')" class="px-2.5 py-1 bg-rose-50 text-rose-700 rounded-lg hover:bg-rose-100 transition border border-rose-200">
+              <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs font-bold">
+                <span class="text-slate-500 dark:text-slate-400">Top 5 ưu tiên tuần tới tính theo điểm số</span>
+                <button onclick="openStudioModal('anomalies')" class="px-2.5 py-1 bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 rounded-lg border border-rose-200 dark:border-rose-800 hover:bg-rose-100">
                   ⚠️ Xử lý ca nghi vấn
                 </button>
               </div>
@@ -758,13 +877,12 @@
 
         </div>
 
-        <!-- FOOTER CANVAS NHỎ GỌN -->
-        <footer class="pt-6 mt-4 border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 font-semibold gap-2">
-          <span>AI301 Đề Dự Án 09 • Công ty Bình Minh • Tác quyền giải pháp AI Agent</span>
+        <!-- FOOTER CANVAS -->
+        <footer class="pt-6 mt-4 border-t border-slate-200/80 dark:border-slate-700/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 font-semibold gap-2">
+          <span>Duydudi AI Studio • Công ty của Duydudi</span>
           <div class="flex items-center gap-3">
-            <button onclick="openStudioModal('selfTest')" class="hover:text-slate-600 transition">🧪 Tự Kiểm Thử</button>
-            <button onclick="openStudioModal('task1Doc')" class="hover:text-slate-600 transition">📑 Tài Liệu Task 1</button>
-            <button onclick="downloadSampleData()" class="hover:text-slate-600 transition">📥 Tải Mẫu Dữ Liệu</button>
+            <button onclick="openStudioModal('selfTest')" class="hover:text-slate-600 dark:hover:text-slate-300 transition">🧪 Tự Kiểm Thử</button>
+            <button onclick="openStudioModal('task1Doc')" class="hover:text-slate-600 dark:hover:text-slate-300 transition">📑 Tài Liệu Task 1</button>
           </div>
         </footer>
 
@@ -775,30 +893,30 @@
 
 
   <!-- ========================================================================= -->
-  <!-- MODAL DIALOG CHI TIẾT (STUDIO DETAIL MODAL DÀNH CHO CÁC MỤC MENU)        -->
+  <!-- MODAL DIALOG CHI TIẾT DÀNH CHO CÁC MỤC NGHIỆP VỤ                          -->
   <!-- ========================================================================= -->
   <div id="studioDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-6">
-    <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
       
       <!-- Modal Header -->
-      <div class="p-5 sm:p-6 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+      <div class="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0">
         <div>
-          <h3 id="modalDetailTitle" class="text-lg font-black text-slate-900">Chi Tiết Nghiệp Vụ</h3>
-          <p id="modalDetailSubtitle" class="text-xs text-slate-500 font-semibold">Hệ thống AI Agent Đề 09</p>
+          <h3 id="modalDetailTitle" class="text-lg font-black text-slate-900 dark:text-white">Chi Tiết Nghiệp Vụ</h3>
+          <p id="modalDetailSubtitle" class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Duydudi AI Agent</p>
         </div>
-        <button onclick="closeStudioModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-black flex items-center justify-center transition">
+        <button onclick="closeStudioModal()" class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-black flex items-center justify-center transition">
           ✕
         </button>
       </div>
 
       <!-- Modal Body -->
-      <div id="modalDetailBody" class="p-5 sm:p-6 overflow-y-auto custom-scroll flex-1 space-y-4">
+      <div id="modalDetailBody" class="p-5 sm:p-6 overflow-y-auto custom-scroll flex-1 space-y-4 text-slate-800 dark:text-slate-200">
         <!-- Rendered by JS -->
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 shrink-0">
-        <button onclick="closeStudioModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">
+      <div class="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2 shrink-0">
+        <button onclick="closeStudioModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs transition">
           Đóng
         </button>
       </div>
@@ -811,16 +929,16 @@
   <!-- MODAL CẤU HÌNH NHANH (CONFIG MODAL)                                       -->
   <!-- ========================================================================= -->
   <div id="configModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-3">
-    <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-200 space-y-4">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-black text-slate-900 text-base">Cấu Hình Nhanh AI Agent</h3>
-        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+    <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
+        <h3 class="font-black text-slate-900 dark:text-white text-base">Cấu Hình Nhanh AI Agent</h3>
+        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Kịch Bản Phân Tích:</label>
-          <select id="modalScenarioSelect" class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Kịch Bản Phân Tích:</label>
+          <select id="modalScenarioSelect" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-100">
             <option value="scenario_1_normal">Kịch bản 1: Thông thường</option>
             <option value="scenario_0_full300">Kịch bản Chuẩn 300 Cơ hội</option>
             <option value="scenario_2_missing">Kịch bản 2: Thiếu dữ liệu</option>
@@ -829,47 +947,222 @@
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Ngày Đối Chiếu Thống Nhất:</label>
-          <input type="date" id="modalReportDateInput" value="2026-11-12" class="w-full p-2 bg-slate-50 border rounded-xl font-bold" />
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Ngày Đối Chiếu Thống Nhất:</label>
+          <input type="date" id="modalReportDateInput" value="2026-11-12" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-100" />
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Ngưỡng Không Hoạt Động (Ngày):</label>
-          <input type="number" id="modalInactivityInput" value="14" class="w-full p-2 bg-slate-50 border rounded-xl font-bold" />
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Gemini API Key:</label>
-          <input type="password" id="modalApiKeyInput" value="AQ.Ab8RN6LqubD2sz-lzVEr8Df6PSbqOVB10Ubndkmpk5k5kxuqIg" class="w-full p-2 bg-slate-50 border rounded-xl font-mono text-[11px]" />
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Gemini API Key:</label>
+          <input type="password" id="modalApiKeyInput" value="AQ.Ab8RN6LqubD2sz-lzVEr8Df6PSbqOVB10Ubndkmpk5k5kxuqIg" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-mono text-[11px] text-slate-800 dark:text-slate-100" />
         </div>
       </div>
 
-      <div class="pt-3 border-t flex justify-end gap-2">
-        <button onclick="closeConfigModal()" class="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Hủy</button>
-        <button onclick="applyConfigAndRun()" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl text-xs shadow-xs">Áp Dụng & Chạy</button>
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
+        <button onclick="closeConfigModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs">Hủy</button>
+        <button onclick="applyConfigAndRun()" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl text-xs shadow-xs">Áp Dụng &amp; Chạy</button>
       </div>
     </div>
   </div>
 
 
   <!-- ========================================================================= -->
-  <!-- CORE JAVASCRIPT: ENGINE & UI LOGIC                                        -->
+  <!-- CORE JAVASCRIPT: THEME ENGINE, WORKFLOW & DASHBOARD                       -->
   <!-- ========================================================================= -->
   <script>
-    // State quản lý toàn cục
-    let currentMainScreen = 'screen1';
-    let portalCurrentTab = 'preset';
+    // State toàn cục
+    let currentMainScreen = 'cover';
+    let portalCurrentTab = 'upload';
     let currentAnalysisResult = null;
     let humanOverridesState = {};
     let selectedUploadFiles = [];
+    let screenNavigationHistory = ['cover'];
+    let screenHistoryIndex = 0;
 
-    // Format tiền tệ Việt Nam (VNĐ)
+    // =========================================================================
+    // HỆ THỐNG GIAO DIỆN NGÀY / ĐÊM (DARK / LIGHT MODE ENGINE)
+    // =========================================================================
+    function initTheme() {
+      const savedTheme = localStorage.getItem('duydudi_theme') || 'light';
+      applyTheme(savedTheme);
+    }
+
+    function toggleThemeMode() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const target = isDark ? 'light' : 'dark';
+      applyTheme(target);
+      localStorage.setItem('duydudi_theme', target);
+    }
+
+    function applyTheme(theme) {
+      const icon = document.getElementById('themeToggleIcon');
+      const label = document.getElementById('themeToggleLabel');
+
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        if (icon) icon.textContent = '☀️';
+        if (label) label.textContent = 'Chế Độ: Ngày';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        if (icon) icon.textContent = '🌙';
+        if (label) label.textContent = 'Chế Độ: Đêm';
+      }
+      updateChromeTabStyles(currentMainScreen);
+    }
+
+    // =========================================================================
+    // CHUYỂN ĐỔI TAB KIỂU GOOGLE CHROME & ĐIỀU HƯỚNG
+    // =========================================================================
+    function switchMainScreen(target, recordHistory = true) {
+      currentMainScreen = target;
+      if (recordHistory) {
+        if (screenNavigationHistory[screenHistoryIndex] !== target) {
+          screenNavigationHistory = screenNavigationHistory.slice(0, screenHistoryIndex + 1);
+          screenNavigationHistory.push(target);
+          screenHistoryIndex = screenNavigationHistory.length - 1;
+        }
+      }
+
+      const sCover = document.getElementById('mainScreenCover');
+      const s1 = document.getElementById('mainScreen1');
+      const s2 = document.getElementById('mainScreen2');
+
+      const allScreens = [sCover, s1, s2];
+      allScreens.forEach(s => {
+        if (s) {
+          s.classList.remove('screen-active');
+          s.classList.add('screen-hidden');
+        }
+      });
+
+      if (target === 'cover' && sCover) {
+        sCover.classList.remove('screen-hidden');
+        sCover.classList.add('screen-active');
+      } else if (target === 'screen1' && s1) {
+        s1.classList.remove('screen-hidden');
+        s1.classList.add('screen-active');
+      } else if (target === 'screen2' && s2) {
+        s2.classList.remove('screen-hidden');
+        s2.classList.add('screen-active');
+      }
+
+      updateChromeTabStyles(target);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigateHistoryBack() {
+      if (screenHistoryIndex > 0) {
+        screenHistoryIndex--;
+        switchMainScreen(screenNavigationHistory[screenHistoryIndex], false);
+      }
+    }
+
+    function navigateHistoryForward() {
+      if (screenHistoryIndex < screenNavigationHistory.length - 1) {
+        screenHistoryIndex++;
+        switchMainScreen(screenNavigationHistory[screenHistoryIndex], false);
+      }
+    }
+
+    function updateChromeTabStyles(target) {
+      const tCover = document.getElementById('tabNavCover');
+      const tScreen1 = document.getElementById('tabNavScreen1');
+      const tScreen2 = document.getElementById('tabNavScreen2');
+      const tabs = [tCover, tScreen1, tScreen2];
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const activeClass = isDark ? 'active-dark' : 'active-light';
+      const inactiveClass = 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/10';
+
+      tabs.forEach(t => {
+        if (t) {
+          t.classList.remove('active-light', 'active-dark');
+          t.className = `chrome-tab px-3.5 py-1.5 flex items-center gap-2 text-xs font-bold transition ${inactiveClass}`;
+        }
+      });
+
+      let activeTab = tCover;
+      if (target === 'screen1') activeTab = tScreen1;
+      else if (target === 'screen2') activeTab = tScreen2;
+
+      if (activeTab) {
+        activeTab.className = `chrome-tab ${activeClass} px-3.5 py-1.5 flex items-center gap-2 text-xs font-bold`;
+      }
+    }
+
+    function toggleChromeMenu() {
+      const menu = document.getElementById('chromeDropdownMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Đóng Chrome menu khi click ra ngoài
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('chromeDropdownMenu');
+      const btn = document.getElementById('btnChromeMenu');
+      if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    function toggleBookmarkNotification() {
+      const icon = document.getElementById('bookmarkStarIcon');
+      icon.textContent = '🌟';
+      alert('Đã lưu địa chỉ "https://duydudi.ai/sales-agent/duydudi-b2b" vào Dấu trang Google Chrome!');
+      setTimeout(() => { icon.textContent = '⭐'; }, 2000);
+    }
+
+    // =========================================================================
+    // HỆ THỐNG ĐÁNH GIÁ SAO (STAR RATING SYSTEM)
+    // =========================================================================
+    let currentUserRating = 5;
+
+    function highlightStars(rating) {
+      const stars = document.querySelectorAll('.star-rating-item');
+      stars.forEach((star, idx) => {
+        if (idx < rating) {
+          star.classList.add('text-amber-400');
+          star.classList.remove('text-slate-300', 'dark:text-slate-600');
+        } else {
+          star.classList.remove('text-amber-400');
+          star.classList.add('text-slate-300', 'dark:text-slate-600');
+        }
+      });
+    }
+
+    function resetStars() {
+      highlightStars(currentUserRating);
+    }
+
+    function submitUserRating(rating) {
+      currentUserRating = rating;
+      highlightStars(rating);
+      const feedback = document.getElementById('starRatingFeedbackText');
+      if (feedback) {
+        const messages = {
+          5: 'Cực kỳ hài lòng! Cảm ơn bạn đã đánh giá 5/5 ⭐',
+          4: 'Rất tốt! Cảm ơn bạn đã đánh giá 4/5 ⭐',
+          3: 'Hài lòng! Duydudi sẽ tiếp tục cải thiện ⭐',
+          2: 'Cảm ơn góp ý của bạn để Duydudi hoàn thiện hơn ⭐',
+          1: 'Chúng tôi ghi nhận góp ý và sẽ nỗ lực nâng cấp hệ thống ⭐'
+        };
+        feedback.textContent = messages[rating] || 'Cảm ơn bạn đã đánh giá!';
+        feedback.classList.remove('text-slate-500', 'text-amber-600');
+        feedback.classList.add('text-emerald-600', 'dark:text-emerald-400', 'font-black');
+      }
+    }
+
+    // Nút BẮT ĐẦU từ Trang bìa: Chuyển trực tiếp sang Trang tải tệp lên
+    function startFromCover() {
+      switchMainScreen('screen1');
+    }
+
+    // Format tiền tệ VNĐ
     function fmtVND(num) {
       if (num === null || num === undefined || isNaN(num)) return '0 đ';
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
     }
 
-    // Format tiền tỷ rút gọn
     function fmtShortBill(num) {
       if (!num) return '0 đ';
       if (Math.abs(num) >= 1_000_000_000) {
@@ -881,66 +1174,86 @@
       return fmtVND(num);
     }
 
-    // Chuyển đổi giữa 2 Giao diện mẫu
-    function switchMainScreen(target) {
-      currentMainScreen = target;
-      const s1 = document.getElementById('mainScreen1');
-      const s2 = document.getElementById('mainScreen2');
-      const btn1 = document.getElementById('btnNavScreen1');
-      const btn2 = document.getElementById('btnNavScreen2');
+    function setPortalTab(tab) {
+      // Legacy wrapper
+      portalCurrentTab = tab || 'upload';
+    }
 
-      if (target === 'screen1') {
-        s2.classList.remove('screen-active');
-        s2.classList.add('screen-hidden');
-        s1.classList.remove('screen-hidden');
-        s1.classList.add('screen-active');
+    // =========================================================================
+    // XỬ LÝ KHUNG TẢI FILE CHUẨN SMALLPDF (CHỌN TỆP, KÉO THẢ)
+    // =========================================================================
+    function triggerFileInputClick() {
+      const input = document.getElementById('portalFileInput');
+      if (input) input.click();
+    }
 
-        btn1.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 bg-pink-500 text-white shadow-xs';
-        btn2.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
-      } else {
-        s1.classList.remove('screen-active');
-        s1.classList.add('screen-hidden');
-        s2.classList.remove('screen-hidden');
-        s2.classList.add('screen-active');
-
-        btn2.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 bg-[#1d4ed8] text-white shadow-xs';
-        btn1.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+    function handleDropzoneDragOver(event) {
+      event.preventDefault();
+      const dz = document.getElementById('smallpdfDropzone');
+      if (dz) {
+        dz.classList.add('ring-4', 'ring-white/60', 'scale-[1.01]');
       }
     }
 
-    // Chuyển đổi Tab trong Màn hình Hồng Khởi Động
-    function setPortalTab(tab) {
-      portalCurrentTab = tab;
-      const tPreset = document.getElementById('tabPortalPreset');
-      const tUpload = document.getElementById('tabPortalUpload');
-      const tGsheet = document.getElementById('tabPortalGsheet');
+    function handleDropzoneDragLeave(event) {
+      event.preventDefault();
+      const dz = document.getElementById('smallpdfDropzone');
+      if (dz) {
+        dz.classList.remove('ring-4', 'ring-white/60', 'scale-[1.01]');
+      }
+    }
 
-      const secPreset = document.getElementById('portalSectionPreset');
-      const secUpload = document.getElementById('portalSectionUpload');
-      const secGsheet = document.getElementById('portalSectionGsheet');
-
-      const activeClass = 'py-2.5 px-3 rounded-xl text-xs font-black text-center transition bg-pink-500 text-white shadow-xs border border-pink-600';
-      const inactiveClass = 'py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 text-center transition bg-white/70 hover:bg-white border border-pink-200';
-
-      tPreset.className = tab === 'preset' ? activeClass : inactiveClass;
-      tUpload.className = tab === 'upload' ? activeClass : inactiveClass;
-      tGsheet.className = tab === 'gsheet' ? activeClass : inactiveClass;
-
-      secPreset.classList.toggle('hidden', tab !== 'preset');
-      secUpload.classList.toggle('hidden', tab !== 'upload');
-      secGsheet.classList.toggle('hidden', tab !== 'gsheet');
+    function handleDropzoneDrop(event) {
+      event.preventDefault();
+      const dz = document.getElementById('smallpdfDropzone');
+      if (dz) {
+        dz.classList.remove('ring-4', 'ring-white/60', 'scale-[1.01]');
+      }
+      const files = event.dataTransfer?.files;
+      if (files && files.length > 0) {
+        selectedUploadFiles = Array.from(files);
+        updateSelectedFilesUI();
+      }
     }
 
     function handlePortalFilesChosen(input) {
       if (input.files && input.files.length > 0) {
         selectedUploadFiles = Array.from(input.files);
-        const names = selectedUploadFiles.map(f => f.name).join(', ');
-        document.getElementById('portalFileNameLabel').textContent = `Đã chọn: ${names}`;
+        updateSelectedFilesUI();
       }
     }
 
-    // Khởi chạy quy trình từ nút "BẮT ĐẦU QUY TRÌNH"
+    function updateSelectedFilesUI() {
+      if (selectedUploadFiles && selectedUploadFiles.length > 0) {
+        const card = document.getElementById('dropzoneSelectedCard');
+        const nameEl = document.getElementById('dropzoneFileName');
+        const sizeEl = document.getElementById('dropzoneFileSize');
+        const names = selectedUploadFiles.map(f => f.name).join(', ');
+        const totalSize = (selectedUploadFiles.reduce((acc, f) => acc + f.size, 0) / 1024).toFixed(1);
+
+        if (card) card.classList.remove('hidden');
+        if (nameEl) nameEl.textContent = names;
+        if (sizeEl) sizeEl.textContent = `${totalSize} KB • Sẵn sàng phân tích`;
+      }
+    }
+
+    function clearSelectedFiles(event) {
+      if (event) event.stopPropagation();
+      selectedUploadFiles = [];
+      const card = document.getElementById('dropzoneSelectedCard');
+      if (card) card.classList.add('hidden');
+      const input = document.getElementById('portalFileInput');
+      if (input) input.value = '';
+    }
+
+    // Khởi chạy quy trình phân tích từ tệp tải lên
     async function executeStartPipeline() {
+      const gsheetUrl = document.getElementById('portalGsheetUrl')?.value?.trim();
+      if ((!selectedUploadFiles || selectedUploadFiles.length === 0) && !gsheetUrl) {
+        alert('Vui lòng chọn hoặc kéo thả tệp Excel (.xlsx), CSV (.csv) vào khung tải lên, hoặc dán link Google Sheets để bắt đầu phân tích!');
+        return;
+      }
+
       const btn = document.getElementById('btnStartPipeline');
       const originalText = btn.innerHTML;
       btn.innerHTML = `<span class="inline-block animate-spin text-xl">⏳</span> <span>ĐANG PHÂN TÍCH...</span>`;
@@ -948,7 +1261,6 @@
 
       try {
         await triggerRunAgent(false);
-        // Chuyển sang Màn hình 2 mượt mà
         switchMainScreen('screen2');
       } catch (err) {
         alert('Lỗi khởi chạy: ' + err.message);
@@ -960,38 +1272,19 @@
 
     // Gọi API thực thi phân tích AI Agent
     async function triggerRunAgent(useLastUploaded = false) {
-      const reportDate = document.getElementById('portalReportDate').value || '2026-11-12';
-      const inactivityDays = parseInt(document.getElementById('portalInactivityDays').value || '14', 10);
-      const apiKey = document.getElementById('portalApiKey').value.trim();
+      const reportDate = document.getElementById('portalReportDate')?.value || '2026-11-12';
+      const inactivityDays = 14;
+      const apiKey = document.getElementById('portalApiKey')?.value?.trim() || 'AQ.Ab8RN6LqubD2sz-lzVEr8Df6PSbqOVB10Ubndkmpk5k5kxuqIg';
+      const gsheetUrl = document.getElementById('portalGsheetUrl')?.value?.trim();
 
-      // Cập nhật text ngày
-      document.getElementById('dashboardSubDate').textContent = 
-        `Ngày đối chiếu thống nhất: ${reportDate} • 10 Nhân viên kinh doanh • Đề Dự Án 09 Công ty Bình Minh`;
+      const subDate = document.getElementById('dashboardSubDate');
+      if (subDate) {
+        subDate.textContent = `Ngày đối chiếu: ${reportDate} • 10 Nhân viên kinh doanh • Công ty của Duydudi`;
+      }
 
       let response;
 
-      if (portalCurrentTab === 'preset' || useLastUploaded) {
-        const scenarioId = document.getElementById('portalScenarioSelect').value || 'scenario_1_normal';
-        document.getElementById('labelCurrentDataset').textContent = 
-          document.getElementById('portalScenarioSelect').selectedOptions[0]?.text.split(':')[0] || 'Kịch bản đang chạy';
-
-        response = await fetch('/api/analyze/preset', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            scenario_id: scenarioId,
-            report_date: reportDate,
-            inactivity_threshold_days: inactivityDays,
-            human_overrides: humanOverridesState,
-            llm_provider: 'gemini',
-            api_key: apiKey,
-            use_last_uploaded: useLastUploaded
-          })
-        });
-      } else if (portalCurrentTab === 'upload') {
-        if (!selectedUploadFiles || selectedUploadFiles.length === 0) {
-          throw new Error('Vui lòng chọn ít nhất một file Excel hoặc CSV để tải lên!');
-        }
+      if (selectedUploadFiles && selectedUploadFiles.length > 0) {
         const formData = new FormData();
         selectedUploadFiles.forEach(f => formData.append('files', f));
         formData.append('report_date', reportDate);
@@ -999,16 +1292,17 @@
         formData.append('api_key', apiKey);
         formData.append('human_overrides', JSON.stringify(humanOverridesState));
 
-        document.getElementById('labelCurrentDataset').textContent = `Tải lên: ${selectedUploadFiles.length} file`;
+        const labelDataset = document.getElementById('labelCurrentDataset');
+        if (labelDataset) labelDataset.textContent = `Tải lên: ${selectedUploadFiles.map(f => f.name).join(', ')}`;
+
         response = await fetch('/api/analyze/upload', {
           method: 'POST',
           body: formData
         });
-      } else if (portalCurrentTab === 'gsheet') {
-        const gsheetUrl = document.getElementById('portalGsheetUrl').value.trim();
-        if (!gsheetUrl) throw new Error('Vui lòng dán link Google Sheets công khai!');
+      } else if (gsheetUrl) {
+        const labelDataset = document.getElementById('labelCurrentDataset');
+        if (labelDataset) labelDataset.textContent = 'Google Sheets Trực Tuyến';
 
-        document.getElementById('labelCurrentDataset').textContent = 'Google Sheets Trực Tuyến';
         response = await fetch('/api/analyze/gsheet', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1020,6 +1314,22 @@
             api_key: apiKey
           })
         });
+      } else if (useLastUploaded) {
+        response = await fetch('/api/analyze/preset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scenario_id: 'scenario_1_normal',
+            report_date: reportDate,
+            inactivity_threshold_days: inactivityDays,
+            human_overrides: humanOverridesState,
+            llm_provider: 'gemini',
+            api_key: apiKey,
+            use_last_uploaded: true
+          })
+        });
+      } else {
+        throw new Error('Vui lòng chọn hoặc kéo thả tệp Excel (.xlsx), CSV (.csv) vào khung tải lên!');
       }
 
       if (!response.ok) {
@@ -1033,35 +1343,35 @@
       return data;
     }
 
-    // Hiển thị dữ liệu lên Dashboard Màn hình 2
+    // Hiển thị Dashboard
     function renderStudioDashboard(data) {
+      const emptyState = document.getElementById('dashboardEmptyState');
+      const dashContent = document.getElementById('dashboardContent');
+      if (emptyState) emptyState.classList.add('hidden');
+      if (dashContent) dashContent.classList.remove('hidden');
+
       const kpi = data.company_kpis;
       
-      // Update Top Metrics (Theo đúng ảnh 2f641b80)
       document.getElementById('metricRecordedRev').textContent = fmtShortBill(kpi.total_recorded_revenue);
       document.getElementById('metricOpenDealsCount').textContent = `${kpi.total_open_opportunities}+`;
-      document.getElementById('metricTotalInputCount').textContent = kpi.total_unique_opportunities || data.opportunities_raw_count || '300';
+      document.getElementById('metricTotalInputCount').textContent = kpi.total_unique_opportunities || data.opportunities_raw_count || '45';
       document.getElementById('metricForecastRev').textContent = fmtShortBill(kpi.total_weighted_forecast_estimate || kpi.total_weighted_forecast_value);
-      document.getElementById('companyAttainPct').textContent = `${kpi.company_actual_attainment_pct}%`;
+      document.getElementById('companyAttainPct').textContent = `${kpi.company_actual_attainment_pct}% (Dự kiến ${kpi.company_projected_attainment_pct}%)`;
 
-      // Cập nhật số lượng bất thường vào badge sidebar
       document.getElementById('badgeSidebarAnomalies').textContent = data.anomalies.length;
 
-      // Cập nhật Executive Brief
       const execBrief = data.ai_executive_brief || data.executive_brief;
       if (execBrief && execBrief.content) {
         document.getElementById('dashboardAiExecutiveBrief').textContent = 
           execBrief.content.replace(/[\#\*\_]/g, '').slice(0, 280) + '...';
       }
 
-      // Render danh sách Recent Orders (Theo đúng định dạng ảnh mẫu 2f641b80)
       const recentCont = document.getElementById('recentOrdersContainer');
       const prio = data.priority_recommendations;
-      const topList = prio.top_opportunities.slice(0, 4);
+      const topList = (prio && prio.top_opportunities) ? prio.top_opportunities.slice(0, 4) : [];
 
-      // Icon colors matching Andreas B (Navy), Alexander M (Pink), Michel Brout (Cyan)
       const colorStyles = [
-        { bg: 'bg-[#1a2b6d]', text: 'text-white' },
+        { bg: 'bg-[#14214d]', text: 'text-white' },
         { bg: 'bg-[#ff4d79]', text: 'text-white' },
         { bg: 'bg-[#00d2ff]', text: 'text-slate-900' },
         { bg: 'bg-amber-500', text: 'text-white' }
@@ -1070,29 +1380,29 @@
       recentCont.innerHTML = topList.map((opp, idx) => {
         const style = colorStyles[idx % colorStyles.length];
         return `
-          <div onclick="openStudioModal('top5')" class="py-2.5 flex items-center justify-between hover:bg-slate-50 cursor-pointer transition px-1 rounded-xl">
+          <div onclick="openStudioModal('top5')" class="py-2.5 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition px-1 rounded-xl">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-lg ${style.bg} ${style.text} font-black flex items-center justify-center text-xs shadow-xs">
                 #${opp.rank}
               </div>
               <div>
-                <h4 class="text-xs font-black text-slate-800 leading-tight">${opp.customer_name}</h4>
-                <span class="text-[10px] text-slate-400 font-semibold">${opp.effective_stage} • ${fmtVND(opp.deal_value)}</span>
+                <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 leading-tight">${opp.customer_name}</h4>
+                <span class="text-[10px] text-slate-400 dark:text-slate-400 font-semibold">${opp.effective_stage} • ${fmtVND(opp.deal_value)}</span>
               </div>
             </div>
             <div class="text-right">
-              <span class="text-xs font-mono font-black text-slate-900">${opp.expected_close_date || '04 Sep 2026'}</span>
-              <span class="text-[10px] text-indigo-600 font-bold block">${opp.priority_score}đ ưu tiên</span>
+              <span class="text-xs font-mono font-black text-slate-900 dark:text-slate-100">${opp.expected_close_date || '04 Sep 2026'}</span>
+              <span class="text-[10px] text-pink-600 dark:text-pink-400 font-bold block">${opp.priority_score}đ ưu tiên</span>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // Mở Modal chi tiết cho từng nghiệp vụ
+    // Modal chi tiết
     function openStudioModal(viewType) {
       if (!currentAnalysisResult) {
-        alert('Đang tải dữ liệu, vui lòng chờ trong giây lát!');
+        alert('Đang nạp dữ liệu phân tích, vui lòng chờ trong giây lát!');
         return;
       }
       const data = currentAnalysisResult;
@@ -1106,26 +1416,26 @@
         mSub.textContent = `Tổng cộng: ${data.company_kpis.total_open_opportunities} cơ hội hợp lệ sau khi deduplicate`;
         mBody.innerHTML = `
           <div class="space-y-3">
-            <div class="p-3 bg-blue-50 border border-blue-200 rounded-2xl text-xs text-blue-900 font-semibold">
+            <div class="p-3 bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 rounded-2xl text-xs text-blue-900 dark:text-blue-200 font-semibold">
               ℹ️ Các cơ hội đã ghi nhận đơn hàng (Closed Won) hoặc đã bị hủy (Closed Lost) đã được tách bạch hoàn toàn khỏi pipeline mở.
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="bg-slate-50 text-slate-500 uppercase text-[10px] border-b">
+                  <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-[10px] border-b dark:border-slate-700">
                     <th class="p-2">Mã CH</th><th>Khách Hàng</th><th>NVKD</th><th>Giai Đoạn</th><th>Trọng Số</th><th class="text-right p-2">Giá Trị Mở</th><th class="text-right p-2">Dự Kiến (Ước Tính)</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y">
+                <tbody class="divide-y dark:divide-slate-700">
                   ${data.opportunities_clean.filter(o => o.open_pipeline_value > 0).map(o => `
-                    <tr class="hover:bg-slate-50">
-                      <td class="p-2 font-mono font-bold text-blue-700">${o.opp_id}</td>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                      <td class="p-2 font-mono font-bold text-blue-700 dark:text-blue-400">${o.opp_id}</td>
                       <td class="p-2 font-bold">${o.customer_name} <span class="text-slate-400 block font-normal text-[10px]">${o.project_name}</span></td>
                       <td class="p-2">${o.rep_id}</td>
-                      <td class="p-2"><span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold">${o.effective_stage}</span></td>
+                      <td class="p-2"><span class="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold">${o.effective_stage}</span></td>
                       <td class="p-2 font-mono">${((o.rule_weight || o.stage_weight || 0) * 100).toFixed(0)}%</td>
                       <td class="p-2 text-right font-bold">${fmtVND(o.open_pipeline_value)}</td>
-                      <td class="p-2 text-right font-black text-rose-600">${fmtVND(o.weighted_forecast_value)}</td>
+                      <td class="p-2 text-right font-black text-rose-600 dark:text-rose-400">${fmtVND(o.weighted_forecast_value)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -1138,24 +1448,24 @@
         mSub.textContent = `Tổng doanh số chốt: ${fmtVND(data.company_kpis.total_recorded_revenue)}`;
         mBody.innerHTML = `
           <div class="space-y-3">
-            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-900 font-semibold">
+            <div class="p-3 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 rounded-2xl text-xs text-emerald-900 dark:text-emerald-200 font-semibold">
               ✅ Doanh số thực tế chỉ được ghi nhận từ bảng Orders và các cơ hội đã chuyển trạng thái Closed Won.
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="bg-slate-50 text-slate-500 uppercase text-[10px] border-b">
+                  <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-[10px] border-b dark:border-slate-700">
                     <th class="p-2">Mã CH</th><th>Khách Hàng</th><th>NVKD</th><th>Trạng Thái</th><th class="text-right p-2">Doanh Số Thực Tế</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y">
+                <tbody class="divide-y dark:divide-slate-700">
                   ${data.opportunities_clean.filter(o => o.actual_recorded_revenue > 0 || o.effective_stage === 'Closed Won').map(o => `
-                    <tr class="hover:bg-slate-50">
-                      <td class="p-2 font-mono font-bold text-emerald-700">${o.opp_id}</td>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                      <td class="p-2 font-mono font-bold text-emerald-700 dark:text-emerald-400">${o.opp_id}</td>
                       <td class="p-2 font-bold">${o.customer_name}</td>
                       <td class="p-2">${o.rep_id}</td>
-                      <td class="p-2"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Closed Won</span></td>
-                      <td class="p-2 text-right font-black text-emerald-700">${fmtVND(o.actual_recorded_revenue || o.deal_value)}</td>
+                      <td class="p-2"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">Closed Won</span></td>
+                      <td class="p-2 text-right font-black text-emerald-700 dark:text-emerald-400">${fmtVND(o.actual_recorded_revenue || o.deal_value)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -1165,18 +1475,18 @@
         `;
       } else if (viewType === 'forecast') {
         mTitle.textContent = 'Chi Tiết Doanh Số Dự Kiến Ước Tính Theo Trọng Số';
-        mSub.textContent = `Tổng dự kiến: ${fmtVND(data.company_kpis.total_weighted_forecast_value)}`;
+        mSub.textContent = `Tổng dự kiến: ${fmtVND(data.company_kpis.total_weighted_forecast_estimate || data.company_kpis.total_weighted_forecast_value)}`;
         mBody.innerHTML = `
           <div class="space-y-3">
-            <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-900 font-semibold">
+            <div class="p-3 bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 rounded-2xl text-xs text-rose-900 dark:text-rose-200 font-semibold">
               📌 Quy định Đề bài 09: Giá trị dự kiến phải được trình bày là ước tính theo quy tắc trọng số giai đoạn (Lead: 10%, Qualification: 25%, Proposal: 50%, Negotiation: 75%, Closing: 90%), không phải doanh số chắc chắn.
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-              <div class="p-2.5 bg-slate-50 rounded-xl border"><span class="text-slate-400 block text-[10px]">Lead (10%)</span><strong class="text-slate-800">10%</strong></div>
-              <div class="p-2.5 bg-slate-50 rounded-xl border"><span class="text-slate-400 block text-[10px]">Qualification (25%)</span><strong class="text-slate-800">25%</strong></div>
-              <div class="p-2.5 bg-slate-50 rounded-xl border"><span class="text-slate-400 block text-[10px]">Proposal (50%)</span><strong class="text-slate-800">50%</strong></div>
-              <div class="p-2.5 bg-slate-50 rounded-xl border"><span class="text-slate-400 block text-[10px]">Negotiation (75%)</span><strong class="text-slate-800">75%</strong></div>
-              <div class="p-2.5 bg-slate-50 rounded-xl border"><span class="text-slate-400 block text-[10px]">Closing (90%)</span><strong class="text-slate-800">90%</strong></div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border dark:border-slate-700"><span class="text-slate-400 block text-[10px]">Lead (10%)</span><strong class="text-slate-800 dark:text-white">10%</strong></div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border dark:border-slate-700"><span class="text-slate-400 block text-[10px]">Qualification (25%)</span><strong class="text-slate-800 dark:text-white">25%</strong></div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border dark:border-slate-700"><span class="text-slate-400 block text-[10px]">Proposal (50%)</span><strong class="text-slate-800 dark:text-white">50%</strong></div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border dark:border-slate-700"><span class="text-slate-400 block text-[10px]">Negotiation (75%)</span><strong class="text-slate-800 dark:text-white">75%</strong></div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border dark:border-slate-700"><span class="text-slate-400 block text-[10px]">Closing (90%)</span><strong class="text-slate-800 dark:text-white">90%</strong></div>
             </div>
           </div>
         `;
@@ -1187,21 +1497,21 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] border-b">
-                  <th class="p-2">Mã NV</th><th>Họ Tên</th><th class="text-right p-2">Mục Tiêu</th><th class="text-right p-2 bg-emerald-50 text-emerald-800 font-bold">Doanh Số Chốt</th><th class="text-center p-2 bg-emerald-50">% Thực Tế</th><th class="text-right p-2 bg-amber-50 text-amber-800">Dự Kiến</th><th class="text-center p-2">% Dự Kiến</th><th class="p-2">Tình Trạng</th>
+                <tr class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b dark:border-slate-700">
+                  <th class="p-2">Mã NV</th><th>Họ Tên</th><th class="text-right p-2">Mục Tiêu</th><th class="text-right p-2 bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">Doanh Số Chốt</th><th class="text-center p-2 bg-emerald-50 dark:bg-emerald-950">% Thực Tế</th><th class="text-right p-2 bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300">Dự Kiến</th><th class="text-center p-2">% Dự Kiến</th><th class="p-2">Tình Trạng</th>
                 </tr>
               </thead>
-              <tbody class="divide-y">
+              <tbody class="divide-y dark:divide-slate-700">
                 ${data.rep_summary.map(r => `
-                  <tr class="hover:bg-slate-50">
-                    <td class="p-2 font-mono font-bold text-blue-700">${r.rep_id}</td>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <td class="p-2 font-mono font-bold text-blue-700 dark:text-blue-400">${r.rep_id}</td>
                     <td class="p-2 font-bold">${r.rep_name}</td>
                     <td class="p-2 text-right">${fmtVND(r.kpi_target)}</td>
-                    <td class="p-2 text-right font-black text-emerald-700 bg-emerald-50/40">${fmtVND(r.recorded_revenue)}</td>
-                    <td class="p-2 text-center font-bold text-emerald-800 bg-emerald-50/40">${r.actual_attainment_pct}%</td>
-                    <td class="p-2 text-right font-bold text-amber-800 bg-amber-50/40">${fmtVND(r.weighted_forecast_value)}</td>
-                    <td class="p-2 text-center font-black text-slate-800">${r.projected_attainment_pct}%</td>
-                    <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.kpi_status.includes('On Track') ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${r.kpi_status}</span></td>
+                    <td class="p-2 text-right font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/40">${fmtVND(r.recorded_revenue)}</td>
+                    <td class="p-2 text-center font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50/40 dark:bg-emerald-950/40">${r.actual_attainment_pct}%</td>
+                    <td class="p-2 text-right font-bold text-amber-800 dark:text-amber-300 bg-amber-50/40 dark:bg-amber-950/40">${fmtVND(r.weighted_forecast_value)}</td>
+                    <td class="p-2 text-center font-black text-slate-800 dark:text-white">${r.projected_attainment_pct}%</td>
+                    <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.kpi_status.includes('On Track') ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'}">${r.kpi_status}</span></td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -1213,31 +1523,31 @@
         mSub.textContent = `Phát hiện: ${data.anomalies.length} trường hợp cần xác minh`;
         mBody.innerHTML = `
           <div class="space-y-4">
-            <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border">
-              <span class="text-xs text-slate-600 font-semibold">Chọn quyết định xử lý và bấm áp dụng để AI Agent tính toán lại:</span>
+            <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded-2xl border dark:border-slate-700">
+              <span class="text-xs text-slate-600 dark:text-slate-300 font-semibold">Chọn quyết định xử lý và bấm áp dụng để AI Agent tính toán lại:</span>
               <button onclick="applyOverridesAndRerun()" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl text-xs shadow-xs transition">
-                Áp Dụng Quyết Định & Chạy Lại
+                Áp Dụng Quyết Định &amp; Chạy Lại
               </button>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] border-b">
-                    <th class="p-2">Mã CH</th><th>Khách Hàng</th><th>Phát Hiện Của AI Agent</th><th class="p-2 bg-pink-50 text-pink-900 font-bold">Quyết Định Của Quản Lý (Bước 4)</th>
+                  <tr class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b dark:border-slate-700">
+                    <th class="p-2">Mã CH</th><th>Khách Hàng</th><th>Phát Hiện Của AI Agent</th><th class="p-2 bg-pink-50 dark:bg-pink-950/80 text-pink-900 dark:text-pink-200 font-bold">Quyết Định Của Quản Lý (Bước 4)</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y">
+                <tbody class="divide-y dark:divide-slate-700">
                   ${data.anomalies.map(a => `
-                    <tr class="hover:bg-slate-50 align-top">
-                      <td class="p-2 font-mono font-bold text-blue-700">${a.opp_id}</td>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 align-top">
+                      <td class="p-2 font-mono font-bold text-blue-700 dark:text-blue-400">${a.opp_id}</td>
                       <td class="p-2 font-bold">${a.customer_name} <span class="text-slate-400 block font-normal text-[10px]">${fmtVND(a.deal_value)}</span></td>
-                      <td class="p-2 max-w-sm"><strong class="text-slate-900 block">${a.title}</strong><p class="text-slate-500">${a.description}</p></td>
-                      <td class="p-2 bg-pink-50/40 min-w-[200px]">
-                        <select onchange="onHumanOverrideChange('${a.opp_id}', this.value)" class="w-full p-2 bg-white border border-pink-300 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-pink-500">
+                      <td class="p-2 max-w-sm"><strong class="text-slate-900 dark:text-white block">${a.title}</strong><p class="text-slate-500 dark:text-slate-400">${a.description}</p></td>
+                      <td class="p-2 bg-pink-50/40 dark:bg-pink-950/40 min-w-[200px]">
+                        <select onchange="onHumanOverrideChange('${a.opp_id}', this.value)" class="w-full p-2 bg-white dark:bg-slate-900 border border-pink-300 dark:border-pink-800 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-pink-500 text-slate-800 dark:text-slate-100">
                           <option value="">-- Theo đề xuất của AI --</option>
                           <option value="SET_CLOSED_LOST">❌ Chuyển Closed Lost (Mất khách)</option>
                           <option value="SET_CLOSED_WON">✅ Chuyển Closed Won (Đã ký kết)</option>
-                          <option value="VERIFY_AND_KEEP_OPEN">🔄 Đã xác minh & Giữ mở</option>
+                          <option value="VERIFY_AND_KEEP_OPEN">🔄 Đã xác minh &amp; Giữ mở</option>
                         </select>
                       </td>
                     </tr>
@@ -1254,31 +1564,31 @@
         mSub.textContent = `Thực tế hợp lệ: ${validCount} cơ hội (Quy tắc xếp hạng 4 tiêu chí)`;
         mBody.innerHTML = `
           <div class="space-y-4">
-            <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 font-semibold">
+            <div class="p-3 bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800 rounded-2xl text-xs text-amber-900 dark:text-amber-200 font-semibold">
               📌 ${prio.boundary_explanation}
             </div>
             <div class="space-y-3">
               ${prio.top_opportunities.map(opp => `
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                  <div class="flex justify-between items-center border-b pb-2">
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 space-y-2">
+                  <div class="flex justify-between items-center border-b dark:border-slate-700 pb-2">
                     <div class="flex items-center gap-2">
                       <span class="w-7 h-7 rounded-lg bg-pink-600 text-white font-black flex items-center justify-center text-xs">#${opp.rank}</span>
-                      <strong class="text-sm text-slate-900">${opp.opp_id} — ${opp.customer_name}</strong>
-                      <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${opp.effective_stage}</span>
+                      <strong class="text-sm text-slate-900 dark:text-white">${opp.opp_id} — ${opp.customer_name}</strong>
+                      <span class="bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full">${opp.effective_stage}</span>
                     </div>
                     <div class="text-right">
-                      <span class="text-xs font-black text-rose-600">${fmtVND(opp.weighted_forecast_value)}</span>
+                      <span class="text-xs font-black text-rose-600 dark:text-rose-400">${fmtVND(opp.weighted_forecast_value)}</span>
                       <span class="text-[10px] text-slate-400 block">Điểm ưu tiên: ${opp.priority_score}đ</span>
                     </div>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <div>
                       <span class="text-slate-400 font-bold block">Căn cứ lựa chọn:</span>
-                      <p class="text-slate-700">${opp.selection_rationale}</p>
+                      <p class="text-slate-700 dark:text-slate-300">${opp.selection_rationale}</p>
                     </div>
-                    <div class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200">
-                      <span class="text-emerald-800 font-bold block">Việc cần làm tuần tới:</span>
-                      <p class="text-emerald-900 font-semibold">${opp.recommended_action_next_week}</p>
+                    <div class="bg-emerald-50/70 dark:bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                      <span class="text-emerald-800 dark:text-emerald-300 font-bold block">Việc cần làm tuần tới:</span>
+                      <p class="text-emerald-900 dark:text-emerald-200 font-semibold">${opp.recommended_action_next_week}</p>
                     </div>
                   </div>
                 </div>
@@ -1292,13 +1602,13 @@
         mBody.innerHTML = `
           <div class="space-y-2.5">
             ${data.audit_logs.map((l, i) => `
-              <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-1">
-                <div class="flex justify-between font-bold text-slate-800">
+              <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+                <div class="flex justify-between font-bold text-slate-800 dark:text-slate-200">
                   <span>#${i+1} [${l.step}] ${l.skill_or_tool}</span>
                   <span class="text-slate-400 font-mono text-[10px]">${l.timestamp}</span>
                 </div>
-                <div class="text-blue-900 font-semibold">${l.action}</div>
-                <div class="text-emerald-800">📏 Quy tắc: ${l.rule_applied}</div>
+                <div class="text-blue-900 dark:text-blue-300 font-semibold">${l.action}</div>
+                <div class="text-emerald-800 dark:text-emerald-400">📏 Quy tắc: ${l.rule_applied}</div>
               </div>
             `).join('')}
           </div>
@@ -1308,7 +1618,7 @@
         mTitle.textContent = 'Toàn Văn Bản Nhận Xét Điều Hành (Google Gemini API)';
         mSub.textContent = `Mô hình: ${eb.provider_used}`;
         mBody.innerHTML = `
-          <div class="p-4 bg-slate-50 rounded-2xl border text-xs text-slate-800 whitespace-pre-line leading-relaxed font-mono">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-line leading-relaxed font-mono">
             ${eb.content}
           </div>
         `;
@@ -1318,7 +1628,7 @@
         mBody.innerHTML = `
           <div class="space-y-3">
             <div class="flex justify-between items-center">
-              <span class="text-xs font-semibold text-slate-600">Bấm để kích hoạt kiểm thử toàn diện:</span>
+              <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Bấm để kích hoạt kiểm thử toàn diện:</span>
               <button onclick="runSystemSelfTest()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition">
                 Chạy Lại Tự Kiểm Thử
               </button>
@@ -1337,7 +1647,7 @@
           .then(d => {
             const md = d.markdown || d.content || '# Chưa tìm thấy tài liệu';
             mBody.innerHTML = `
-              <div class="p-4 bg-slate-50 rounded-2xl border text-xs text-slate-800 whitespace-pre-line leading-relaxed font-sans">
+              <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-line leading-relaxed font-sans">
                 ${md}
               </div>
             `;
@@ -1345,6 +1655,120 @@
           .catch(() => {
             mBody.innerHTML = '<p class="text-xs text-rose-500">Không thể tải tài liệu Task 1.</p>';
           });
+      } else if (viewType === 'architecture') {
+        mTitle.textContent = 'Sơ Đồ Kiến Trúc End-to-End Data Analytics AI Agent (4 Tầng)';
+        mSub.textContent = 'Mô hình tổng thể: Tiếp nhận đa nguồn → Thẩm định cách ly lỗi → Vòng lặp Agent → Xuất bản';
+        mBody.innerHTML = `
+          <div class="space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              
+              <!-- TẦNG 1 -->
+              <div class="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/60 border-2 border-blue-200 dark:border-blue-800 flex flex-col justify-between space-y-3">
+                <div class="space-y-1.5">
+                  <div class="inline-block px-2 py-0.5 rounded-md bg-blue-600 text-white font-extrabold text-[10px]">TẦNG 1</div>
+                  <h4 class="font-black text-slate-900 dark:text-white text-sm">DATA INGESTION</h4>
+                  <p class="text-[11px] text-slate-600 dark:text-slate-400">Tiếp nhận &amp; Định tuyến đa nguồn</p>
+                </div>
+                <div class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
+                  <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-blue-900">
+                    <strong>• Unified Gateway:</strong> UI Upload (CSV, Excel, ZIP) + Google Sheets
+                  </div>
+                  <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-blue-900">
+                    <strong>• External Ingest:</strong> Webhook API tiếp nhận tự động
+                  </div>
+                </div>
+              </div>
+
+              <!-- TẦNG 2 -->
+              <div class="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/60 border-2 border-amber-200 dark:border-amber-800 flex flex-col justify-between space-y-3">
+                <div class="space-y-1.5">
+                  <div class="inline-block px-2 py-0.5 rounded-md bg-amber-600 text-white font-extrabold text-[10px]">TẦNG 2</div>
+                  <h4 class="font-black text-slate-900 dark:text-white text-sm">VALIDATION &amp; CLEAN</h4>
+                  <p class="text-[11px] text-slate-600 dark:text-slate-400">Thẩm định &amp; Cách ly lỗi</p>
+                </div>
+                <div class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
+                  <div class="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-900 text-rose-900 dark:text-rose-200">
+                    <strong>• Quarantine Zone:</strong> Cách ly bản ghi lỗi (data_quarantine.csv)
+                  </div>
+                  <div class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-900 text-emerald-900 dark:text-emerald-200">
+                    <strong>• Cleaned Dataset:</strong> Lưu bộ dữ liệu sạch vào Sandbox
+                  </div>
+                </div>
+              </div>
+
+              <!-- TẦNG 3 -->
+              <div class="p-4 rounded-2xl bg-purple-50/70 dark:bg-purple-950/60 border-2 border-purple-200 dark:border-purple-800 flex flex-col justify-between space-y-3">
+                <div class="space-y-1.5">
+                  <div class="inline-block px-2 py-0.5 rounded-md bg-purple-600 text-white font-extrabold text-[10px]">TẦNG 3</div>
+                  <h4 class="font-black text-slate-900 dark:text-white text-sm">REASONING LOOP</h4>
+                  <p class="text-[11px] text-slate-600 dark:text-slate-400">Tư duy &amp; Thực thi phân tích AI</p>
+                </div>
+                <div class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
+                  <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-900">
+                    <strong>• LLM Planner:</strong> Google Gemini Live AI tổng hợp Insight
+                  </div>
+                  <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-900">
+                    <strong>• Self-Correction:</strong> Tự kiểm tra &amp; sửa lỗi logic an toàn
+                  </div>
+                </div>
+              </div>
+
+              <!-- TẦNG 4 -->
+              <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/60 border-2 border-emerald-200 dark:border-emerald-800 flex flex-col justify-between space-y-3">
+                <div class="space-y-1.5">
+                  <div class="inline-block px-2 py-0.5 rounded-md bg-emerald-600 text-white font-extrabold text-[10px]">TẦNG 4</div>
+                  <h4 class="font-black text-slate-900 dark:text-white text-sm">OUTPUT &amp; DELIVERY</h4>
+                  <p class="text-[11px] text-slate-600 dark:text-slate-400">Trình bày trực tiếp &amp; Xuất tệp</p>
+                </div>
+                <div class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
+                  <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-emerald-100 dark:border-emerald-900">
+                    <strong>• Dashboard UI:</strong> Biểu đồ sóng Earning, KPI 10 sales
+                  </div>
+                  <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-emerald-100 dark:border-emerald-900">
+                    <strong>• Export Files:</strong> Excel (.xlsx), CSV, Webhook response
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Tải tệp cách ly -->
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 space-y-3">
+              <h4 class="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                <span>📦</span> Tải Tệp Kết Quả &amp; Bản Ghi Cách Ly (Quarantine Zone):
+              </h4>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <a href="/api/export/quarantine.csv" download="data_quarantine.csv" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs">
+                  <span>⚠️</span> Tải data_quarantine.csv (Bản ghi lỗi cách ly)
+                </a>
+                <a href="/api/export/cleaned.csv" download="cleaned_data.csv" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs">
+                  <span>✅</span> Tải cleaned_data.csv (Bản ghi sạch)
+                </a>
+                <a href="/api/download-sample/scenario_1_normal?format=xlsx" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs">
+                  <span>📊</span> Tải BinhMinh_Scenario1_Normal.xlsx
+                </a>
+              </div>
+            </div>
+
+            <!-- Webhook curl -->
+            <div class="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <strong class="text-indigo-950 dark:text-indigo-200 font-black text-sm">🔗 Webhook Endpoint Tiếp Nhận Bên Ngoài (Tầng 1):</strong>
+                <span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold rounded-full text-[10px]">Active</span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-400">
+                Hệ thống POS, CRM hoặc luồng n8n/Zapier có thể đẩy tệp trực tiếp vào endpoint này:
+              </p>
+              <div class="p-3 bg-slate-900 text-slate-100 rounded-xl font-mono text-[11px] overflow-x-auto">
+                curl -X POST "${window.location.origin}/api/webhook/ingest" \\<br/>
+                &nbsp;&nbsp;-F "partner_id=POS_SYSTEM_01" \\<br/>
+                &nbsp;&nbsp;-F "files=@BinhMinh_Scenario1_Normal.xlsx"
+              </div>
+            </div>
+
+          </div>
+        `;
       }
 
       modal.classList.remove('hidden');
@@ -1397,7 +1821,7 @@
         const allPassed = suites.every(s => s.all_passed);
         
         let html = `
-          <div class="p-3 ${allPassed ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-amber-50 border-amber-200 text-amber-800'} border rounded-2xl text-xs space-y-1 mb-3">
+          <div class="p-3 ${allPassed ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' : 'bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200'} border rounded-2xl text-xs space-y-1 mb-3">
             <span class="font-extrabold text-sm">${allPassed ? '✅ 100% CÁC KIỂM THỬ ĐỀU ĐẠT (ALL PASS)' : '⚠️ CÓ ĐIỂM CẦN LƯU Ý'}</span>
             <p>Hệ thống AI Agent tự động chạy trực tiếp trên 3 bộ dữ liệu: Thông thường, Thiếu dữ liệu, và Ranh giới quy tắc.</p>
           </div>
@@ -1405,22 +1829,22 @@
 
         suites.forEach(s => {
           html += `
-            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 mb-2">
-              <div class="flex items-center justify-between border-b pb-1.5">
-                <strong class="text-slate-900">${s.scenario_name}</strong>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${s.all_passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+            <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2 mb-2">
+              <div class="flex items-center justify-between border-b dark:border-slate-700 pb-1.5">
+                <strong class="text-slate-900 dark:text-white">${s.scenario_title || s.scenario_name || s.scenario_id}</strong>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${s.all_passed ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300' : 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300'}">
                   ${s.all_passed ? 'ĐẠT (PASS)' : 'KHÔNG ĐẠT'}
                 </span>
               </div>
               <div class="space-y-1.5 pt-1">
                 ${(s.checks || []).map(c => `
-                  <div class="p-2 bg-white rounded-xl border border-slate-100 flex items-start justify-between gap-2 text-xs">
+                  <div class="p-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 flex items-start justify-between gap-2 text-xs">
                     <div>
-                      <span class="font-bold text-slate-800 block">${c.check_name}</span>
-                      <span class="text-[10px] text-slate-500 block">Kỳ vọng: ${c.expected}</span>
-                      <span class="text-[10px] text-indigo-600 block">Thực tế: ${c.actual}</span>
+                      <span class="font-bold text-slate-800 dark:text-slate-100 block">${c.check_name}</span>
+                      <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Kỳ vọng: ${c.expected}</span>
+                      <span class="text-[10px] text-pink-600 dark:text-pink-400 block">Thực tế: ${c.actual}</span>
                     </div>
-                    <span class="px-2 py-0.5 rounded font-black text-[10px] shrink-0 ${c.passed ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
+                    <span class="px-2 py-0.5 rounded font-black text-[10px] shrink-0 ${c.passed ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'}">
                       ${c.passed ? 'PASS' : 'FAIL'}
                     </span>
                   </div>
@@ -1436,14 +1860,9 @@
       }
     }
 
-    function downloadSampleData() {
-      const sc = document.getElementById('portalScenarioSelect').value || 'scenario_1_normal';
-      window.location.href = `/api/download-sample/${sc}`;
-    }
-
-    // Tự động tải dữ liệu ban đầu
+    // Tự động khởi tạo Theme khi tải trang
     window.addEventListener('DOMContentLoaded', () => {
-      triggerRunAgent(false).catch(() => {});
+      initTheme();
     });
   </script>
 
